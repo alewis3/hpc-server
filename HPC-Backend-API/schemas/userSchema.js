@@ -1,31 +1,55 @@
-const userSchema = mongoose.Schema({
-    id : Number,
-    username: String,
-    password: String,
-    email: String,
-    name: {
-        first: String,
-        last: String
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+// var autoIncrement = require('mongoose-auto-increment');
+
+// autoIncrement.initialize(mongoose.connection);
+
+const userSchema = new Schema({
+    email: {
+        type: String,
+        unique: true,
+        required: true
     },
-    accountType: String,
-    birthday: Date,
-    blockedUsers: [{
-        blockedUserId: Number
-    }],
-    blockedBy: [{
-        blockingUserId: Number
-    }],
+    password: {
+        type: String,
+        required: true
+    },
+    name: {
+        first: {
+            type: String,
+            required: true
+        },
+        last: {
+            type: String,
+            required: true
+        }
+    },
+    homeAddress: {
+        streetAddress: String,
+        city: String,
+        state: {
+            type: String, 
+            minlength: 2,
+            maxlength: 2
+        },      
+        zip: Number
+    },
+    accountType: {
+        type: String,
+        enum: ['Contributor', 'Homeowner', 'Business Owner']
+    },
+    birthday: {
+        type: String, 
+        validate: {
+            validator: function(b) {
+                return /\d{2}\/\d{2}\/\d{4}/.test(b)
+            },
+            message: props => '${props.value} is not a valid birthday!'
+        }
+    },
+    blockedUsers: [Number],
+    blockedBy: [Number],
     homeownerInfo: {
-        name: {
-            first: String,
-            last: String
-        },
-        homeAddress: {
-            streetAddress: String,
-            city: String,
-            state: String,       
-            zip: Number
-        },
         meetingPlace: {   
             streetAddress: String,
             city: String,
@@ -49,15 +73,13 @@ const userSchema = mongoose.Schema({
         }
     },
     contributorInfo: {
-        homeAddress: {
-            streetAddress: String,
-            city: String,
-            state: String,       
-            zip: Number
-        },
-        searchRadius: Number,
+        searchRadius: Number
     }
 }, 
 {
     timestamps: true
 });
+
+//userSchema.plugin(autoIncrement.plugin, 'User');
+
+var userModel = mongoose.model('User', userSchema);
