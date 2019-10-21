@@ -8,13 +8,16 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var mongoose = require('mongoose');
+//var autoIncrement = require('mongoose-auto-increment');
 
-mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true },function (error) {
+var connection = mongoose.connect('mongodb://localhost:27017/test', {useNewUrlParser: true, useUnifiedTopology: true },function (error) {
 
   if (error) console.log(error);
   else
     console.log(" **** DB connection successful ****");
 });
+
+//autoIncrement.initialize({connection: connection});
 
 var app = express();
 
