@@ -91,9 +91,9 @@ router.get('/validate', async (req, res) => {
     if (err) throw err;
     else return data;
   });
-  user.then(function(doc) {
-    console.log((doc));
-    doc.validateUser(token, function(err) {
+  
+  console.log((user));
+    user.validateUser(token, function(err) {
       if (err) {
         console.log("The user could not be validated.");
         res.status(403).send({"authenticated": "false", "error": err});
@@ -104,9 +104,7 @@ router.get('/validate', async (req, res) => {
         res.status(200).send({"authenticated": "true"});
       }
     });
-  }).catch(function(err) {
-    res.status(403).send({"authenticated": "false", "error": err});
-  });
+
 
   
 
