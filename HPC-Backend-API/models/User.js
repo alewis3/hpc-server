@@ -172,8 +172,11 @@ userSchema.methods.addContributorInfo = function(info, cb) {
  */
 userSchema.methods.validateUser = function(token, cb) {
     if (this.validationToken == token) {
+        console.log("Tokens matched");
         var user = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {'validated': true}}, cb);
+        console.log("User updated")
         user.save();
+        console.log("User saved");
         return true;
     }
     return false;
