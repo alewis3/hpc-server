@@ -127,7 +127,7 @@ userSchema.methods.blockUser = function(blocked, cb) {
         if (err) return false;
         else return true;
     });
-    var blockedBySet = this.model('User').findOneAndUpdate({$eq: {'_id': {$eq: blockedUser._id}}, {$set: {blockedBy: {$addToSet: this._id}}}, function(err, doc) {
+    var blockedBySet = this.model('User').findOneAndUpdate({'_id': {$eq: blockedUser._id}}, {$set: {blockedBy: {$addToSet: this._id}}}, function(err, doc) {
         if (err) return false;
         else return true;
     });
@@ -181,7 +181,7 @@ userSchema.methods.validateUser = function(token, cb) {
 };
 
 userSchema.statics.findUser = async function(userId, cb) {
-    let data = await this.find({$eq: {'_id': userId}}, cb);
+    let data = await this.find({'_id': {$eq: this._id}}, cb);
     return data;
 };
 
