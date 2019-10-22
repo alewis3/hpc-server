@@ -180,8 +180,9 @@ userSchema.methods.validateUser = function(token, cb) {
     
 };
 
-userSchema.statics.findUser = function(userId, cb) {
-    return this.model('User').find({'_id': userId}, cb);
+userSchema.statics.findUser = async function(userId, cb) {
+    let data = await this.find({'_id': userId}, cb);
+    return data;
 };
 
 
