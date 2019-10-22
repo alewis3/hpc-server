@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcryptjs');
+mongoose.set('useFindAndModify', false);
 
 const userSchema = new Schema({
     email: {
@@ -177,8 +178,11 @@ userSchema.statics.validate = function(userId, token, cb) {
     });
 
     if(user.validationToken == token) {
-        this.model('User').findOneAndUpdate({'_id': userId}, {$set: {'validated': true}}, cb);
-        user.save(function(err,data) {
+        var updatedUser = this.model('User').findOneAndUpdate({'_id': userId}, {$set: {'validated': true}}, function(err, usr) {
+            if (err) throw err;
+            else return usr;
+        });
+        updatedUser.save(function(err,data) {
             if (err) throw err;
             else console.log(data);
         })

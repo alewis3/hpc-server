@@ -15,6 +15,11 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+/*
+ * This route handles registering a user. The request will include an email,
+ * password, first and last name, account type, and a birthday in string format.
+ * It handles sending an email to the specified email.
+ */
 router.post("/register", async (req, res) => {
 
   var token = uuid();
@@ -55,6 +60,10 @@ router.post("/register", async (req, res) => {
 
 });
 
+/*
+ * This route handles logging in a user. This is after the user has been authenticated. 
+ * The validated field must be true for this user. 
+ */
 router.post('/login', async (req, res) => {
   const json = req.body;
   const email = json.email;
@@ -75,7 +84,7 @@ router.post('/login', async (req, res) => {
 router.get('/validate', (req, res) => {
   const userId = req.userId;
   const token = req.token;
-  user.validate(userId, token, function(err, data) {
+  user.validate(userId, token, function(err) {
     if (err) {
       console.log("The user could not be validated.");
       res.status(403).send({"authenticated": "false", "error": err});
