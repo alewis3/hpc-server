@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt');
 
 let mongoose = require('mongoose');
 let user = require('../models/User');
+let nodemailer = require('nodemailer');
 
 const salt = 10;
 
