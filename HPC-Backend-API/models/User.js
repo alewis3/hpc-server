@@ -181,7 +181,7 @@ userSchema.methods.validateUser = function(token, cb) {
 };
 
 userSchema.statics.findUser = async function(userId, cb) {
-    let data = await this.find({'_id': {$eq: this._id}}, cb);
+    let data = await this.find({'_id': Schema.Types.ObjectId(userId)}, cb);
     return data;
 };
 
