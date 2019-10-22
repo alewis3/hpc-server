@@ -26,8 +26,6 @@ router.post("/register", async (req, res) => {
   const accountType = json.accountType;
   const birthdayString = json.DOB;
 
-  console.log(hashedPassword);
-
   var newUser = new user({
     email: email,
     password: password,
