@@ -82,8 +82,8 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/validate', async (req, res) => {
-  const userId = req.userId;
-  const token = req.token;
+  const userId = req.query.userId;
+  const token = req.query.token;
 
   console.log(userId + " " + typeof(userId));
   console.log(token + " " + typeof(token));
