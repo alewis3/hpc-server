@@ -177,7 +177,11 @@ userSchema.statics.validate = function(userId, token, cb) {
     });
 
     if(user.validationToken == token) {
-        this.model('User').findOneAndUpdate({'_id': user._id}, {$set: {'validated': true}}, cb);
+        this.model('User').findOneAndUpdate({'_id': userId}, {$set: {'validated': true}}, cb);
+        user.save(function(err,data) {
+            if (err) throw err;
+            else console.log(data);
+        })
         return true;
     }
     else {
