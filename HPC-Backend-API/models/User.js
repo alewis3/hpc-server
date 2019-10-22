@@ -180,7 +180,7 @@ userSchema.methods.validateUser = function(token, cb) {
     
 };
 
-userSchema.statics.findUserById = async function(userId, cb) {
+userSchema.statics.findById = async function(userId, cb) {
     var o_id = new Schema.Types.ObjectId(userId);
     try {
         let data = await this.find({'_id': o_id}, cb);
