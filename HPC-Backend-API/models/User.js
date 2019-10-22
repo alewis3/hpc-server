@@ -123,11 +123,11 @@ userSchema.methods.findBlockedBy = function(cb) {
  */
 userSchema.methods.blockUser = function(blocked, cb) {
     var blockedUser = this.model('User').find({'_id': blocked._id}, cb);
-    var blockedUsersSet = this.model('User').findOneAndUpdate({$eq: {'_id': this._id}}, {$set: {blockedUsers: {$addToSet: blockedUser._id}}}, function(err, doc) {
+    var blockedUsersSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {blockedUsers: {$addToSet: blockedUser._id}}}, function(err, doc) {
         if (err) return false;
         else return true;
     });
-    var blockedBySet = this.model('User').findOneAndUpdate({$eq: {'_id': blockedUser._id}}, {$set: {blockedBy: {$addToSet: this._id}}}, function(err, doc) {
+    var blockedBySet = this.model('User').findOneAndUpdate({$eq: {'_id': {$eq: blockedUser._id}}, {$set: {blockedBy: {$addToSet: this._id}}}, function(err, doc) {
         if (err) return false;
         else return true;
     });
@@ -142,7 +142,7 @@ userSchema.methods.blockUser = function(blocked, cb) {
  * 
  */
 userSchema.methods.addHomeownerInfo = function(info, cb) {
-    var homeownerInfoSet = this.model('User').findOneAndUpdate({$eq: {'_id': this._id}}, {$set: {'homeownerInfo': info}}, cb);
+    var homeownerInfoSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {'homeownerInfo': info}}, cb);
     return homeownerInfoSet;
 };
 
@@ -152,7 +152,7 @@ userSchema.methods.addHomeownerInfo = function(info, cb) {
  * businessHours with keys weekdayHours and weekendHours.
  */
 userSchema.methods.addBusinessOwnerInfo = function(info, cb) {
-    var businessOwnerInfoSet = this.model('User').findOneAndUpdate({$eq: {'_id': this._id}}, {$set: {'businessOwnerInfo': info}}, cb);
+    var businessOwnerInfoSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {'businessOwnerInfo': info}}, cb);
     return businessOwnerInfoSet;
 };
 
@@ -161,7 +161,7 @@ userSchema.methods.addBusinessOwnerInfo = function(info, cb) {
  * with key searchRadius
  */
 userSchema.methods.addContributorInfo = function(info, cb) {
-    var contributerInfoSet = this.model('User').findOneAndUpdate({$eq: {'_id': this._id}}, {$set: {'contributorInfo': info}}, cb);
+    var contributerInfoSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {'contributorInfo': info}}, cb);
     return contributerInfoSet;
 };
 
@@ -172,7 +172,7 @@ userSchema.methods.addContributorInfo = function(info, cb) {
  */
 userSchema.methods.validateUser = function(token, cb) {
     if (this.validationToken == token) {
-        var user = this.model('User').findOneAndUpdate({$eq: {'_id': this._id}}, {$set: {'validated': true}}, cb);
+        var user = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {'validated': true}}, cb);
         user.save();
         return true;
     }
