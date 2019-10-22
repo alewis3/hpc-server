@@ -47,8 +47,8 @@ const userSchema = new Schema({
     },
     validated: Boolean,
     validationToken: String,
-    blockedUsers: [{ type : ObjectId, ref: 'User' }],
-    blockedBy: [{ type : ObjectId, ref: 'User' }],
+    blockedUsers: [{ type : Schema.Types.ObjectId, ref: 'User' }],
+    blockedBy: [{ type : Schema.Types.ObjectId, ref: 'User' }],
     homeownerInfo: {
         required: false,
         meetingPlace: {   
