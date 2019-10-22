@@ -172,7 +172,7 @@ userSchema.methods.addContributorInfo = function(info, cb) {
  */
 userSchema.methods.validateUser = function(token, cb) {
     if (this.validationToken == token) {
-        var user = this.model('User').findOneAndUpdate({'_id': this._id}, {$set: {'validated': true}}, cb);
+        var user = this.model('User').findOneAndUpdate({'_id': Schema.Types.ObjectId(this._id)}, {$set: {'validated': true}}, cb);
         user.save();
         return true;
     }
@@ -181,7 +181,7 @@ userSchema.methods.validateUser = function(token, cb) {
 };
 
 userSchema.statics.findUser = async function(userId, cb) {
-    let data = await this.find({'_id': userId}, cb);
+    let data = await this.find({'_id': Schema.Types.ObjectId(userId)}, cb);
     return data;
 };
 
