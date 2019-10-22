@@ -81,11 +81,11 @@ router.post('/login', async (req, res) => {
   res.status(200).send({loginStatus: "true"});
 });
 
-router.get('/validate', (req, res) => {
+router.get('/validate', async (req, res) => {
   const userId = req.userId;
   const token = req.token;
 
-  var user = User.findById(userId, function(err, data) {
+  var user = await User.findById(userId, function(err, data) {
     if (err) throw err;
     else return data;
   });
