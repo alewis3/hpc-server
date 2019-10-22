@@ -165,26 +165,23 @@ userSchema.methods.addContributorInfo = function(info, cb) {
     return contributerInfoSet;
 };
 
-userSchema.statics.findUser = function(userId, cb) {
-    return this.model('User').find({'_id': userId}, cb);
-};
-
 /*
- * This method will execute a query to find a matching user with that userId. 
- * If it finds a user and the token matches the validationToken in the db, then 
- * it returns true and sets the validated attribute of that user to true. If it 
- * does not match, it does nothing to the validated attribute and returns false.
+ * This method will check if the current user's validation token 
+ * matches the token given, and will update the validated field if so
+ * and return true.
  */
 userSchema.methods.validateUser = function(token, cb) {
-
-    if(this.validationToken == token) {
-        this.validated = true;
-        this.save(cb);
+    if (this.validationToken == token) {
+        var user = this.model('User').findOneAndUpdate({'_id': this._id}, {$set: {'validated': true}}, cb);
+        user.save();
         return true;
     }
-    else {
-        return false;
-    }
+    return false;
+    
+};
+
+userSchema.statics.findUser = function(userId, cb) {
+    return this.model('User').find({'_id': userId}, cb);
 };
 
 
