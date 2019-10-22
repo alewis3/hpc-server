@@ -181,7 +181,7 @@ userSchema.methods.validateUser = function(token, cb) {
 };
 
 userSchema.statics.findById = async function(userId, cb) {
-    var o_id = new Schema.Types.ObjectId(userId);
+    var o_id = new mongoose.Types.ObjectId(userId);
     try {
         let data = await this.find({'_id': o_id}, cb);
         return data;
