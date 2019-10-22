@@ -85,6 +85,8 @@ router.get('/validate', async (req, res) => {
   const userId = req.userId;
   const token = req.token;
 
+  console.log(userId + " " + typeof(userId));
+  console.log(token + " " + typeof(token));
   var user = await User.findById(userId, function(err, data) {
     if (err) throw err;
     else return data;
