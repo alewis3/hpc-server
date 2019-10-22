@@ -90,7 +90,7 @@ router.get('/validate', (req, res) => {
     else return data;
   });
 
-  console.log(typeof(user));
+  console.log((user instanceof User));
   user.validateUser(token, function(err) {
     if (err) {
       console.log("The user could not be validated.");
