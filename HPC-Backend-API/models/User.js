@@ -175,7 +175,7 @@ userSchema.statics.findUser = function(userId, cb) {
  * it returns true and sets the validated attribute of that user to true. If it 
  * does not match, it does nothing to the validated attribute and returns false.
  */
-userSchema.methods.validate = function(token, cb) {
+userSchema.methods.validateUser = function(token, cb) {
 
     if(this.validationToken == token) {
         this.validated = true;

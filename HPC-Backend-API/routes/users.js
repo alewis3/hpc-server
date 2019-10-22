@@ -89,7 +89,7 @@ router.get('/validate', (req, res) => {
     if (err) throw err;
     else return data;
   })
-  user.validate(token, function(err) {
+  user.validateUser(token, function(err) {
     if (err) {
       console.log("The user could not be validated.");
       res.status(403).send({"authenticated": "false", "error": err});
