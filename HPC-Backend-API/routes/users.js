@@ -47,7 +47,7 @@ router.post("/register", async (req, res) => {
     }
     else {
       console.log(data);
-      var url = "https://hpcompost.com/user/validate?userId=" + data._id + "token=" + uuid;
+      var url = "https://hpcompost.com/users/validate?userId=" + data._id + "&token=" + uuid;
       testmail(email, firstName, lastName, "Confirm your HPC Account", "Please confirm your account!", "To confirm, click <a href=" + url + ">this link</a>");
       res.status(201).send({"registrationStatus": "true"});
     }

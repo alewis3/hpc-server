@@ -170,7 +170,7 @@ userSchema.methods.addContributorInfo = function(info, cb) {
  * it returns true and sets the validated attribute of that user to true. If it 
  * does not match, it does nothing to the validated attribute and returns false.
  */
-userSchema.static.validate = function(userId, token, cb) {
+userSchema.statics.validate = function(userId, token, cb) {
     var user = this.model('User').find({'_id': userId}, function(err, usr) {
         if (err) throw err;
         else return usr;
