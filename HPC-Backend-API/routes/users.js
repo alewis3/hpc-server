@@ -93,6 +93,7 @@ router.get('/validate', async (req, res) => {
   });
   user = new User(user);
   console.log("new type of user: " + typeof(user) + " " + (user instanceof User));
+  console.log(user.validationToken);
   var valid = user.validateUser(token, function(err, valid) {
     if (err) {
       console.log("The user could not be validated.");

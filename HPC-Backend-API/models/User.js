@@ -174,9 +174,11 @@ userSchema.methods.validateUser = function(token, cb) {
     console.log("In function");
     console.log("Token to match: " + token);
     console.log("Matching to: " + this.validationToken);
+    console.log("This user: " + this);
     if (this.validationToken == token) {
         console.log("Tokens matched");
-        var user = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {'validated': true}}, cb);
+        var o_id = new mongoose.Types.ObjectId(this._id);
+        var user = this.model('User').findOneAndUpdate({'_id': o_id}, {$set: {'validated': true}}, cb);
         console.log("User updated")
         user.save();
         console.log("User saved");
