@@ -102,7 +102,7 @@ router.get('/validate', async (req, res) => {
         res.status(200).send({"authenticated": "true"});
       }
     });
-  }, function(err) {
+  }).catch(function(err) {
     res.status(403).send({"authenticated": "false", "error": err});
   });
 
