@@ -178,14 +178,8 @@ userSchema.statics.validate = function(userId, token, cb) {
     });
 
     if(user.validationToken == token) {
-        var updatedUser = this.model('User').findOneAndUpdate({'_id': userId}, {$set: {'validated': true}}, function(err, usr) {
-            if (err) throw err;
-            else return usr;
-        });
-        updatedUser.save(function(err,data) {
-            if (err) throw err;
-            else console.log(data);
-        })
+        user.validated = true;
+        user.save();
         return true;
     }
     else {
