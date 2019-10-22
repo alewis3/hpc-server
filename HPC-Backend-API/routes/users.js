@@ -91,11 +91,9 @@ router.get('/validate', async (req, res) => {
     if (err) throw err;
     else return data;
   });
-  
-  console.log(user + " " + typeof(user) + " " + (user instanceof User));
   user = new User(user);
   console.log("new type of user: " + typeof(user) + " " + (user instanceof User));
-  user.validateUser(token, function(err) {
+  var valid = user.validateUser(token, function(err, valid) {
     if (err) {
       console.log("The user could not be validated.");
       res.status(403).send({"authenticated": "false", "error": err});
@@ -104,6 +102,7 @@ router.get('/validate', async (req, res) => {
     else {
       console.log("The user with userId " + userId + " was validated successfully!");
       res.status(200).send({"authenticated": "true"});
+      return valid;
     }
   });
 
