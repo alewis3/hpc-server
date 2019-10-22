@@ -5,7 +5,7 @@ var uuid = require('uuid/v4');
 const bcrypt = require('bcrypt');
 
 let mongoose = require('mongoose');
-let user = require('../models/User');
+let User = require('../models/User');
 let nodemailer = require('nodemailer');
 
 const salt = 10;
@@ -32,7 +32,7 @@ router.post("/register", async (req, res) => {
   const accountType = json.accountType;
   const birthdayString = json.DOB;
 
-  var newUser = new user({
+  var newUser = new User({
     email: email,
     password: password,
     name: {
@@ -84,7 +84,12 @@ router.post('/login', async (req, res) => {
 router.get('/validate', (req, res) => {
   const userId = req.userId;
   const token = req.token;
-  user.validate(userId, token, function(err) {
+
+  var user = User.findById(userId, function(err, data) {
+    if (err) throw err;
+    else return data;
+  })
+  user.validate(token, function(err) {
     if (err) {
       console.log("The user could not be validated.");
       res.status(403).send({"authenticated": "false", "error": err});
