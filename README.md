@@ -1,2 +1,2 @@
-# SP-backend
-A collection of files relating to our Senior Project backend.
+# HPC
+A collections of files for our senior project, Host, Post, and Compost. 
