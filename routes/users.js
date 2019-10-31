@@ -79,7 +79,12 @@ router.post('/login', async (req, res) => {
   if(!passwordMatch) {
     return res.status(401).send({ loginStatus: "false", message: "The password is invalid" });
   }
-  res.status(200).send({loginStatus: "true"});
+  const validated = user.validated;
+  if(!validated) {
+    return res.status(401).send({ loginStatus: "false", message: "The user is not validated" });
+
+  }
+  res.status(200).send({loginStatus: "true", "accountType": user.accountType});
 });
 
 
