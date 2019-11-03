@@ -102,7 +102,7 @@ router.get('/validate', async (req, res) => {
   var user = await User.validateUser(userId, token, function(err, data) {
     if (err) {
       console.log("The user could not be validated.");
-      res.status(403).render('failure', {title: "Your account was not confirmed", error: err});
+      res.status(403).render('failure', {title: "Your account was not confirmed!"});
       throw err;
     }
     else {
@@ -111,7 +111,7 @@ router.get('/validate', async (req, res) => {
         res.status(200).render('success', {title: "Thank you for confirming your account!", name: data.name.first});
       }
       else {
-        res.status(403).render('failure', {title: "Your account was not confirmed", error: err});
+        res.status(403).render('failure', {title: "Your account was not confirmed!"});
       }
       return data;
     }
