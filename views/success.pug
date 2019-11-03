@@ -1,8 +1,7 @@
 extends layout
 
-var link = "<a href='https://hpcompost.com/'>here</a>"
 
 block content
     h1= title
-    body
-        p #{name}, your account has been confirmed. Please click #{link} to return to the main page.
+    - var link = "<a href='https://hpcompost.com/'>here</a>"
+    p #{name}, your account has been confirmed. Please click #{link} to return to the main page.

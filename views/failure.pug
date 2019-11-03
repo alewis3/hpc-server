@@ -1,9 +1,8 @@
 extends layout
 
-var link = "<a href='https://hpcompost.com/register'>here</a>"
 
 block content
     h1=title
-    body
-        p Please click !{link} to register again.
-        p Errors were: #{error}
+    - var link = "<a href='https://hpcompost.com/register'>here</a>"
+    p Please click !{link} to register again.
+    p Errors were: #{error}
