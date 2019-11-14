@@ -76,19 +76,19 @@ router.post("/", async (req, res) => {
   const json = req.body;
 
   if (is.not.string(json.email) || is.not.email(json.email)) {
-      res.status(401).send({"registrationStatus": false, "error": "FormattingError: Email"})
+      res.status(400).send({"registrationStatus": false, "error": "FormattingError: Email"})
   }
   else if (is.not.string(json.password)) {
-      res.status(401).send({"registrationStatus": false, "error": "FormattingError: Password"})
+      res.status(400).send({"registrationStatus": false, "error": "FormattingError: Password"})
   }
   else if (is.not.string(json.name.first) || is.not.string(json.name.last)) {
-      res.status(401).send({"registrationStatus": false, "error": "FormattingError: Name"})
+      res.status(400).send({"registrationStatus": false, "error": "FormattingError: Name"})
   }
   else if (is.not.string(json.accountType) || is.not.inArray(json.accountType, ["Contributor", "Homeowner", "Business Owner"])) {
-      res.status(401).send({"registrationStatus": false, "error": "FormattingError: Account Type"})
+      res.status(400).send({"registrationStatus": false, "error": "FormattingError: Account Type"})
   }
   else if (is.not.string(json.dob) || is.not.dateString(json.dob)) {
-      res.status(401).send({"registrationStatus": false, "error": "FormattingError: Birthday"})
+      res.status(400).send({"registrationStatus": false, "error": "FormattingError: Birthday"})
   }
   else if (is.not.object(json.address) ||
       is.not.string(json.address.streetAddress) ||
@@ -99,7 +99,7 @@ router.post("/", async (req, res) => {
       is.not.number(json.address.zip) ||
       is.not.usZipCode(json.address.zip)
   ) {
-      res.status(401).send({"registrationStatus": false, "error": "Address not formatted properly."})
+      res.status(400).send({"registrationStatus": false, "error": "Address not formatted properly."})
   }
   else {
       var newUser = new User({
@@ -124,7 +124,7 @@ router.post("/", async (req, res) => {
       newUser.save(function (err, data) {
           if (err) {
               console.log(err);
-              res.status(401).send({"registrationStatus": false, "error": err});
+              res.status(400).send({"registrationStatus": false, "error": err});
           } else {
               console.log(data);
               var url = "https://hpcompost.com/users/validate?userId=" + data._id + "&token=" + token;
