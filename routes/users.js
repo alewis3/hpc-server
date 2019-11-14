@@ -213,7 +213,7 @@ router.get('/', async (req, res) => {
  * attribute of this user to true if the tokens match and if not, it will not do anything and 
  * throw an error.
  *
- * @api {patch} /users/validate Validate a user before first login
+ * @api {get} /users/validate Validate a user before first login
  * @apiName ValidateUser
  * @apiGroup Users
  *
@@ -226,7 +226,7 @@ router.get('/', async (req, res) => {
  * @apiErrorExample UserNotValidated
  *      HTTP/1.1 404 Not Found - Render failure.pug file
  */
-router.patch('/validate', async (req, res) => {
+router.get('/validate', async (req, res) => {
   const userId = req.query.userId;
   const token = req.query.token;
 
