@@ -3,6 +3,12 @@ var Schema = mongoose.Schema;
 var bcrypt = require('bcryptjs');
 mongoose.set('useFindAndModify', false);
 
+let gmApi = require('@google/maps');
+
+var gmClient = gmApi.createClient({
+    key: process.env.GMAPS_API_KEY,
+});
+
 const userSchema = new Schema({
     email: {
         type: String,
@@ -23,21 +29,23 @@ const userSchema = new Schema({
             required: true
         }
     },
-    address: {
-        streetAddress: String,
+    location: {
+        address: String,
         city: String,
         state: {
             type: String, 
             minlength: 2,
             maxlength: 2
         },      
-        zip: Number
+        zip: Number,
+        lat: Number,
+        long: Number
     },
     accountType: {
         type: String,
         enum: ['Contributor', 'Homeowner', 'Business Owner', 'System Admin']
     },
-    birthday: {
+    dob: {
         type: String, 
         validate: {
             validator: function(b) {
@@ -46,21 +54,21 @@ const userSchema = new Schema({
             message: props => props.value + ' is not a valid birthday!'
         }
     },
-    validated: Boolean,
-    validationToken: String,
     blockedUsers: [{ type : Schema.Types.ObjectId, ref: 'User' }],
     blockedBy: [{ type : Schema.Types.ObjectId, ref: 'User' }],
     homeownerInfo: {
         required: false,
         meetingPlace: {   
-            streetAddress: String,
+            address: String,
             city: String,
             state: String,
-            zip: Number
+            zip: Number,
+            lat: Number,
+            long: Number
         },
         acceptedMaterials: String,
         isListingOn: Boolean,
-        display_radius: Number,
+        displayRadius: Number,
     },
     businessOwnerInfo: {
         required: false,
@@ -72,7 +80,8 @@ const userSchema = new Schema({
         businessHours: {
             weekdayHours: String,
             weekendHours: String
-        }
+        },
+        displayRadius: Number
     },
     contributorInfo: {
         required: false,
@@ -87,19 +96,48 @@ const userSchema = new Schema({
  * A pre-save hook for hashing the pwd
  */
 userSchema.pre('save', function(next) {
-    if (this.isModified("password")) {
-        var pw = this.password;
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(pw, salt, (err, hash) => {
-                if (err) throw err;
-                this.password = hash;
-                next();
-            })
+    let user = this;
+    if (!user.isModified("password")) {
+        return next();
+    }
+    var pw = user.password;
+    bcrypt.genSalt(10, (err, salt) => {
+        bcrypt.hash(pw, salt, (err, hash) => {
+            if (err) return next(err);
+            console.log(hash);
+            user.password = hash;
+            console.log(user.password);
+            next();
         })
+    });
+});
+
+// and a pre save hook for getting the latitude and longitude
+userSchema.pre('save', function(next) {
+    if (!this.isModified("location")) {
+        return next();
     }
-    else {
-        next();
-    }
+    let user = this;
+    var state = user.location.state;
+    state = state.toUpperCase();
+    user.location.state = state;
+
+    gmClient.geocode({
+        address: user.location.address + " " + user.location.city + " " + user.location.state + " " + user.location.zip
+    }, function(err, response) {
+        if (err) {
+            console.log(err);
+            return next(err);
+        }
+        else {
+            console.log(response.json.results[0].geometry);
+            user.location.lat = response.json.results[0].geometry.location.lat;
+            user.location.long = response.json.results[0].geometry.location.lng;
+            console.log(user.location.lat + " " + user.location.long);
+            next();
+        }
+    });
+
 });
 
 /*

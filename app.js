@@ -8,13 +8,12 @@ dotenv.config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var aboutRouter = require('./routes/about');
-
+var docsRouter = require('./routes/docs');
 
 var mongoose = require('mongoose');
 //var autoIncrement = require('mongoose-auto-increment');
 
-var connection = mongoose.connect('mongodb://team1:' + encodeURIComponent(process.env.MONGO_PW) + '@localhost:27017/test?authSource=admin&w=1', {useNewUrlParser: true, useUnifiedTopology: true },function (error) {
+var connection = mongoose.connect('mongodb://'/*team1:' + encodeURIComponent(process.env.MONGO_PW) + '@*/ + 'localhost:27017/hpc?'/*authSource=admin&w=1'*/, {useNewUrlParser: true, useUnifiedTopology: true },function (error) {
 
   if (error) console.log(error);
   else
@@ -33,12 +32,13 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/../SP-frontend/frontend/build')));
+app.use(express.static(path.join(__dirname, '/../SP-frontend/frontend/public')));
+app.use('/api', express.static(path.join(__dirname, '/apidoc')));
 
-app.use('/api/', indexRouter);
 app.use('/api/users', usersRouter);
-app.use('/api/about', aboutRouter);
-
+app.use('/api/docs', docsRouter);
+app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
