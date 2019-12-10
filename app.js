@@ -32,7 +32,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '/../SP-frontend/frontend/build')));
-app.use(express.static(path.join(__dirname, '/../SP-frontend/frontend/public')));
+app.use('/dev', express.static(path.join(__dirname, '/../SP-frontend/frontend/public')));
 app.use('/api', express.static(path.join(__dirname, '/apidoc')));
 
 app.use('/api/users', usersRouter);
