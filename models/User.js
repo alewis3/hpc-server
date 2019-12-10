@@ -97,6 +97,11 @@ userSchema.pre('save', function(next) {
             })
         })
     }
+    if (this.isModified("address.state")) {
+        var state = this.address.state;
+        state = state.toUpperCase();
+        this.address.state = state;
+    }
     else {
         next();
     }
