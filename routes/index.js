@@ -20,6 +20,9 @@ if(process.env.NODE_ENV === 'production') {
   router.get('/', function (req, res) {
     res.sendFile(path.join(__dirname, '/../../SP-frontend/frontend/build/', 'index.html'));
   });
+  router.get('/*', function (req, res) {
+    res.sendFile(path.join(__dirname, '/../../SP-frontend/frontend/build/', 'index.html'));
+  });
 }
 /*
  * If the node process is not running in production, then serve up static files from
@@ -37,6 +40,9 @@ else {
    * for all other requests serve up the index.html file from the public folder.
    */
   router.get('/', function (req, res) {
+    res.sendFile(path.join(__dirname, '/../../SP-frontend/frontend/public/', 'index.html'));
+  });
+  router.get('/*', function (req, res) {
     res.sendFile(path.join(__dirname, '/../../SP-frontend/frontend/public/', 'index.html'));
   });
 }
