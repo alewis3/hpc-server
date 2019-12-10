@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var path = require("path");
 
 /*
  * If this node process is running in production, we want to serve up static files
