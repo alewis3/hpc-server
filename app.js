@@ -9,6 +9,7 @@ dotenv.config();
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var docsRouter = require('./routes/docs');
+var prefRouter = require('./routes/preferences');
 
 var mongoose = require('mongoose');
 //var autoIncrement = require('mongoose-auto-increment');
@@ -37,6 +38,7 @@ app.use('/api', express.static(path.join(__dirname, '/apidoc')));
 
 app.use('/api/users', usersRouter);
 app.use('/api/docs', docsRouter);
+app.use('/api/preferences', prefRouter);
 app.use('/', indexRouter);
 
 // catch 404 and forward to error handler
