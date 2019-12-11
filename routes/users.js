@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
-
 const bcrypt = require('bcrypt');
 const is = require("is_js");
-let mongoose = require('mongoose');
 let User = require('../models/User');
 
 /**
@@ -22,7 +20,6 @@ let User = require('../models/User');
  * @apiParam {String} name[first] The user's first name
  * @apiParam {String} name[last] The user's last name
  * @apiParam {String="Contributor", "Homeowner", "Business Owner"} accountType The account type of the user.
- * @apiParam {String} dob The user's Date of Birth in "MM/DD/YYYY" format
  * @apiParam {Object} location An object containing "streetAddress", "city", "state", and "zip" fields
  * @apiParam {String} location[address] The user's street Address including number and street name
  * @apiParam {String} location[city] The user's city e.g. "Austin" or "Dallas"
@@ -38,7 +35,6 @@ let User = require('../models/User');
  *              "last": "Lewis"
  *          },
  *          "accountType": "Homeowner",
- *          "dob": "07/16/1998"
  *          "location": {
  *              "address": "3001 S. Congress Ave.",
  *              "city": "Austin",
@@ -80,9 +76,6 @@ router.post("/register", async (req, res) => {
   else if (is.not.string(json.accountType) || is.not.inArray(json.accountType, ["Contributor", "Homeowner", "Business Owner"])) {
       res.status(400).send({"registrationStatus": false, "error": "FormattingError: Account Type"})
   }
-  else if (is.not.string(json.dob) || is.not.dateString(json.dob)) {
-      res.status(400).send({"registrationStatus": false, "error": "FormattingError: Birthday"})
-  }
   else if (is.not.object(json.location) ||
       is.not.string(json.location.address) ||
       is.not.string(json.location.city) ||
@@ -102,7 +95,6 @@ router.post("/register", async (req, res) => {
               last: json.name.last
           },
           accountType: json.accountType,
-          dob: json.dob,
           location: {
               address: json.location.address,
               city: json.location.city,
@@ -170,7 +162,7 @@ router.post('/login', async (req, res) => {
   console.log(email);
   var user = await User.findOne({ email: email }).exec();
   if(!user) {
-    return res.status(401).send({ loginStatus: false, message: "The username does not exist" });
+    return res.status(401).send({ loginStatus: false, error: "The username does not exist" });
   }
 
   const passwordMatch = bcrypt.compareSync(password, user.password);
@@ -200,7 +192,7 @@ router.post('/login', async (req, res) => {
  * @apiParam {Number} [location[zip]] -> The user's zip code in number format (5 digits and valid US zip)
  */
 
-/**
+/*
  * @api {get} /users/hosts?user_id=X Get all nearby hosts location
  * @apiName GetHosts
  * @apiGroup Users
@@ -213,11 +205,50 @@ router.post('/login', async (req, res) => {
  * @apiSuccess {Number} hosts.location.long The long of the host
  * @apiSuccess {String} hosts.accountType The account type of the host (Homeowner or Business Owner)
  */
-router.get('/hosts', function(req, res) {
-    var userId = req.query.userId;
+// router.get('/hosts', function(req, res) {
+//     var userId = req.query.userId;
+//
+// });
 
+/**
+ * @api {post} /users/resetPassword Reset a user's password
+ * @apiName ResetPassword
+ * @apiGroup Users
+ * @apiDescription This route handles resetting a password
+ *
+ * @apiParam {String} id The id of the user
+ * @apiParam {String} old The user's old password to match with
+ * @apiParam {String} new The user's new password to save in the db
+ *
+ * @apiSuccess {Boolean} success Will be true if the old password matched and was able to be changed
+ *
+ * @apiError {Boolean} success Will be false if the old password did not match or the new pwd was not able to be changed
+ * @apiError {String} error The error that caused success to be false
+ */
+router.post('/resetPassword', async function (req, res) {
+    var json = req.body;
+    var user = await User.findById(json.id).exec();
+    if(!user) {
+        return res.status(401).send({ success: false, error: "The id does not exist" });
+    }
+
+    const passwordMatch = bcrypt.compareSync(json.old, user.password);
+    if(!passwordMatch) {
+        return res.status(401).send({ success: false, error: "No password match" });
+    }
+    else {
+        user.password = json.new;
+        user.save(function(err) {
+            if (err) {
+                console.log(err);
+                return res.status(500).send({success: false, error: "User could not be saved"});
+            }
+            else {
+                return res.status(200).send({success: true});
+            }
+        });
+    }
 });
-
 
 /*
  * This path handles validating a user after they register. in the get request query
