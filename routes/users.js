@@ -127,7 +127,7 @@ router.post("/register", async (req, res) => {
  * This route handles logging in a user. This is after the user has been authenticated.
  * The validated field must be true for this user.
  *
- * @api {get} /users/login Authenticate a user for login
+ * @api {post} /users/login Authenticate a user for login
  * @apiName LoginUser
  * @apiGroup Users
  *
@@ -163,7 +163,7 @@ router.post("/register", async (req, res) => {
  *     }
  *
  */
-router.get('/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   const json = req.body;
   const email = json.email;
   const password = json.password;
