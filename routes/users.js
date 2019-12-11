@@ -167,7 +167,7 @@ router.get('/login', async (req, res) => {
   const json = req.body;
   const email = json.email;
   const password = json.password;
-
+  console.log(email);
   var user = await User.findOne({ email: email }).exec();
   if(!user) {
     return res.status(401).send({ loginStatus: "false", message: "The username does not exist" });
