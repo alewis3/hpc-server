@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const bcrypt = require('bcrypt');
-
+const is = require("is_js");
 let mongoose = require('mongoose');
 let User = require('../models/User');
 
@@ -24,7 +24,7 @@ let User = require('../models/User');
  * @apiParam {String="Contributor", "Homeowner", "Business Owner"} accountType The account type of the user.
  * @apiParam {String} dob The user's Date of Birth in "MM/DD/YYYY" format
  * @apiParam {Object} location An object containing "streetAddress", "city", "state", and "zip" fields
- * @apiParam {String} location[streetAddress] The user's street Address including number and street name
+ * @apiParam {String} location[address] The user's street Address including number and street name
  * @apiParam {String} location[city] The user's city e.g. "Austin" or "Dallas"
  * @apiParam {String{2}} location[state] The user's state in this format: Texas -> "TX" or California -> "CA", etc
  * @apiParam {Number} location[zip] -> The user's zip code in number format (5 digits and valid US zip)
@@ -177,7 +177,7 @@ router.get('/login', async (req, res) => {
   if(!passwordMatch) {
     return res.status(401).send({ loginStatus: "false", error: "WrongCredentials" });
   }
-  return res.status(200).send({loginStatus: "true", "accountType": user.accountType});
+  return res.status(200).send({loginStatus: "true", "accountType": user.accountType, "id": user._id});
 });
 
 /*
