@@ -45,17 +45,10 @@ const userSchema = new Schema({
         type: String,
         enum: ['Contributor', 'Homeowner', 'Business Owner', 'System Admin']
     },
-    dob: {
-        type: String, 
-        validate: {
-            validator: function(b) {
-                return /\d{2}\/\d{2}\/\d{4}/.test(b)
-            },
-            message: props => props.value + ' is not a valid birthday!'
-        }
-    },
     blockedUsers: [{ type : Schema.Types.ObjectId, ref: 'User' }],
     blockedBy: [{ type : Schema.Types.ObjectId, ref: 'User' }],
+    allowedItems: {type: String, required: false},
+    prohibitedItems: {type: String, required: false},
     homeownerInfo: {
         required: false,
         meetingPlace: {   
@@ -66,13 +59,11 @@ const userSchema = new Schema({
             lat: Number,
             long: Number
         },
-        acceptedMaterials: String,
         isListingOn: Boolean,
         displayRadius: Number,
     },
     businessOwnerInfo: {
         required: false,
-        acceptedMaterials: String,
         isListingOn: Boolean,
         businessName: String,
         businessPhone:Number,
