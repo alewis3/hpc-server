@@ -284,9 +284,9 @@
  * @api {get} /users/hosts?id=X Get all nearby hosts location
  * @apiName GetHosts
  * @apiGroup Users
- * @apiDescription NI - This endpoint will eventually limit the search of users to a radius based on the user_id sent in and the search radius of that user, but for now it will grab all available hosts.
+ * @apiDescription NI - This endpoint will eventually limit the search of users to a radius based on the id sent in and the search radius of that user, but for now it will grab all available hosts.
  *
- * @apiParam {String} userId Sent in the request url, the user id of the user you want to match by.
+ * @apiParam {String} id Sent in the request url, the user id of the user you want to match by.
  *
  * @apiSuccess {Boolean} success Will be true if hosts could be found
  * @apiSuccess {Object[]} hosts The list of hosts to display on the map
