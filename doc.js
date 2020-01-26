@@ -145,7 +145,7 @@
  */
 
 /**
- * @api {patch} /preferences/profile Let a user edit or update their profile
+ * @api {patch} /preferences/profile Update a user profile
  * @apiName PatchProfile
  * @apiGroup Preferences
  * @apiDescription NI - This path will be called on whenever the user makes changes to their account and presses save. All fields are optional but at least one must be sent in for the request call to make sense.
