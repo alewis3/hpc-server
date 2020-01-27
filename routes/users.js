@@ -4,6 +4,12 @@ const bcrypt = require('bcrypt');
 const is = require("is_js");
 let User = require('../models/User');
 
+/**
+ * POST register route
+ *
+ * For registering new users.
+ * See https://hpcompost.com/api/docs#api-Users-CreateUser for more information
+ */
 router.post("/register", async (req, res) => {
 
   const json = req.body;
@@ -59,7 +65,12 @@ router.post("/register", async (req, res) => {
   } // end of else to check if valid
 });
 
-
+/**
+ * POST login route
+ *
+ * For logging in users.
+ * See https://hpcompost.com/api/docs#api-Users-LoginUser for more information
+ */
 router.post('/login', async (req, res) => {
   const json = req.body;
   const email = json.email;
@@ -72,17 +83,66 @@ router.post('/login', async (req, res) => {
 
   const passwordMatch = bcrypt.compareSync(password, user.password);
   if(!passwordMatch) {
-    return res.status(401).send({ loginStatus: false, error: "WrongCredentials" });
+    return res.status(401).send({ loginStatus: false, error: "WrongCredentials"});
   }
   return res.status(200).send({loginStatus: true, "accountType": user.accountType, "id": user._id});
+}); // end of login route impl
+
+/**
+ * GET hosts
+ *
+ * To get all valid hosts for a contributor
+ * See https://hpcompost.com/api/docs#api-Users-GetHosts for more info
+ */
+router.get('/hosts', async function(req, res) {
+    var userId = req.query.id;
+    var user = await User.findById(userId).exec();
+    if(!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound"});
+    }
+
+    // TODO add this error response to docs
+    if (user.accountType !== "Contributor") {
+        return res.status(400).send({ success: false, error: "AccountTypeMismatch"});
+    }
+    else {
+        var clat = user.location.lat;
+        var clong = user.location.long;
+        var cradius = user.radius;
+        await User.find({accountType: {$in: ["Homeowner", "Business Owner"]}})
+            .select("location.lat location.long accountType radius")
+            .exec(function (err, hosts) {
+                if (hosts.length === 0) {
+                    // todo change the no content response to a successful response in the docs
+                    return res.status(204).send({success: true, hosts: []});
+                }
+                else {
+                    /*
+                    // this will be used once we have radii in the db
+                    var filteredHosts = hosts.filter(function(element) {
+                        var hradius = element.radius;
+                        var hlat = element.location.lat;
+                        var hlong = element.location.long;
+                        // distance = sqrt[(x2 - x1)^2 + (y2 - y1)^2]
+                        // or more specifically:
+                        // distance = sqrt[(ContributorLat - HostLat)^2 + (ContributorLong - HostLong)^2]
+                        var distance = Math.sqrt((Math.pow((clat - hlat), 2) + Math.pow((clong - hlong), 2)));
+                        return cradius > distance && hradius > distance;
+                    });
+                     */
+                    // for now just return a list of all the hosts
+                    return res.status(200).send({success: true, hosts: hosts});
+                }
+        });
+    }
 });
 
-
-// router.get('/hosts', function(req, res) {
-//     var userId = req.query.userId;
-//
-// });
-
+/**
+ * POST reset password route
+ *
+ * Used to reset a user's password.
+ * See https://hpcompost.com/api/docs#api-Users-ResetPassword for more information
+ */
 router.post('/resetPassword', async function (req, res) {
     var json = req.body;
     var user = await User.findById(json.id).exec();
@@ -107,83 +167,5 @@ router.post('/resetPassword', async function (req, res) {
         });
     }
 });
-
-/*
- * This path handles validating a user after they register. in the get request query
- * there are two variables, the userId, and the token to match to. It calls the static 
- * method validateUser and sends in those two tokens. Validate user will update the validated
- * attribute of this user to true if the tokens match and if not, it will not do anything and 
- * throw an error.
- */
-/*
-router.get('/validate', async (req, res) => {
-  const userId = req.query.userId;
-  const token = req.query.token;
-
-  var user = await User.validateUser(userId, token, function(err, data) {
-    if (err) {
-      console.log("The user could not be validated.");
-      res.status(403).render('failure', {title: "Your account was not confirmed!"});
-      throw err;
-    }
-    else {
-      if (data != null) {
-        console.log(data);
-        res.status(200).render('success', {title: "Thank you for confirming your account!", name: data.name.first});
-      }
-      else {
-        res.status(403).render('failure', {title: "Your account was not confirmed!"});
-      }
-      return data;
-    }
-  });
-
-});
-*/
-/*
-function testmail(email, firstName, lastName, subject, body, htmlBody) {
-
-  nodemailer.createTestAccount((err, account) => {
-    if (err) {
-        console.error('Failed to create a testing account. ' + err.message);
-        return process.exit(1);
-    }
-
-    console.log('Credentials obtained, sending message...');
-
-    // Create a SMTP transporter object
-    let transporter = nodemailer.createTransport({
-        host: account.smtp.host,
-        port: account.smtp.port,
-        secure: account.smtp.secure,
-        auth: {
-            user: account.user,
-            pass: account.pass
-        }
-    });
-
-    // Message object
-    let message = {
-        from: 'NO_REPLY <no-reply@hpcompost.com>',
-        to: firstName + ' ' + lastName +  '<' + email + '>',
-        subject: String(subject),
-        text: String(body),
-        html: String(htmlBody)
-    };
-
-    transporter.sendMail(message, (err, info) => {
-        if (err) {
-            console.log('Error occurred. ' + err.message);
-            return process.exit(1);
-        }
-
-        console.log('Message sent: %s', info.messageId);
-        // Preview only available when sending through an Ethereal account
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    });
-});
-
-}
-*/
 
 module.exports = router;

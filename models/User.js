@@ -49,6 +49,7 @@ const userSchema = new Schema({
     blockedBy: [{ type : Schema.Types.ObjectId, ref: 'User' }],
     allowedItems: {type: String, required: false},
     prohibitedItems: {type: String, required: false},
+    radius: {type: Number, required: true, default: 5},
     homeownerInfo: {
         required: false,
         meetingPlace: {   
@@ -59,8 +60,7 @@ const userSchema = new Schema({
             lat: Number,
             long: Number
         },
-        isListingOn: Boolean,
-        displayRadius: Number,
+        isListingOn: Boolean
     },
     businessOwnerInfo: {
         required: false,
@@ -71,12 +71,7 @@ const userSchema = new Schema({
         businessHours: {
             weekdayHours: String,
             weekendHours: String
-        },
-        displayRadius: Number
-    },
-    contributorInfo: {
-        required: false,
-        searchRadius: Number
+        }
     }
 }, 
 {
