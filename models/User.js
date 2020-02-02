@@ -1,6 +1,9 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var bcrypt = require('bcryptjs');
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
+let bcrypt = require('bcryptjs');
+let is = require('is_js');
+let properFormat = require('../helpers/properFormat');
+let capitalizedFormat = require('../helpers/capitalizedFormat');
 mongoose.set('useFindAndModify', false);
 
 let gmApi = require('@google/maps');
@@ -10,16 +13,22 @@ var gmClient = gmApi.createClient({
 });
 
 const userSchema = new Schema({
-    email: {
+    email: { // is converted to lowercase in a pre save hook
         type: String,
         unique: true,
-        required: true
+        required: true,
+        validate: {
+            validator: function(e) {
+                return is.email(e);
+            },
+            message: props => `${props.value()} is not a valid email!`
+        }
     },
-    password: {
+    password: { // is hashed in a pre save hook
         type: String,
         required: true
     },
-    name: {
+    name: { // is proper formatted in a pre save hook
         first: {
             type: String,
             required: true
@@ -30,47 +39,77 @@ const userSchema = new Schema({
         }
     },
     location: {
-        address: String,
-        city: String,
-        state: {
+        address: String, // proper formatted in a pre save hook
+        city: String, // proper formatted in a pre save hook
+        state: { // capitalized in a pre save hook
             type: String, 
             minlength: 2,
             maxlength: 2
         },      
-        zip: Number,
-        lat: Number,
-        long: Number
+        zip: { // can only be a us zip code at this point
+            type: Number,
+            validate: {
+                validator: function(z) {
+                    return is.usZipCode(z);
+                },
+                message: props => `${props.value} is not a valid US zip code!`
+            }
+        },
+        lat: Number, // these two are calculated in a pre save hook using google maps
+        long: Number // so not necessary to add them.
     },
     accountType: {
         type: String,
         enum: ['Contributor', 'Homeowner', 'Business Owner', 'System Admin']
     },
-    blockedUsers: [{ type : Schema.Types.ObjectId, ref: 'User' }],
-    blockedBy: [{ type : Schema.Types.ObjectId, ref: 'User' }],
-    allowedItems: {type: String, required: false},
-    prohibitedItems: {type: String, required: false},
-    radius: {type: Number, required: true, default: 5},
+    blockedUsers: [{type: String, required: false}],
+    blockedBy: [{type: String, required: false}],
+    allowedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
+    prohibitedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
+    radius: {type: Number, required: true, default: 5, max: 100, min: 0.1},
     homeownerInfo: {
         required: false,
-        meetingPlace: {   
-            address: String,
-            city: String,
-            state: String,
-            zip: Number,
-            lat: Number,
-            long: Number
+        meetingPlace: { // when the user document is saved for the first time, this will default to same as the location if it is not set
+            address: String, // proper formatted in a pre save hook
+            city: String, // proper formatted in a pre save hook
+            state: { // capitalized in a pre save hook
+                type: String,
+                minlength: 2,
+                maxlength: 2
+            },
+            zip: { // can only be a us zip code at this point
+                type: Number,
+                validate: {
+                    validator: function(z) {
+                        return is.usZipCode(z);
+                    },
+                    message: props => `${props.value} is not a valid US zip code!`
+                }
+            },
+            lat: Number, // these are calculated in a pre save hook using google maps
+            long: Number // so no need to calculate manually
         },
-        isListingOn: Boolean
+        isListingOn: {
+            type: Boolean,
+            default: true
+        }
     },
     businessOwnerInfo: {
         required: false,
-        isListingOn: Boolean,
-        businessName: String,
-        businessPhone:Number,
-        businessWebsite: String,
-        businessHours: {
-            weekdayHours: String,
-            weekendHours: String
+        isListingOn: {
+            type: Boolean,
+            default: true
+        },
+        businessName: String, // this is proper formatted in a pre-save hook
+        businessWebsite: { // this url is converted to lowercase in a pre save hook
+            type: String,
+            required: false,
+            validate: {
+                validator: function(v) {
+                    return is.url(v);
+                },
+                message: props => `${props.value} is not a valid website!`
+            }
         }
     }
 }, 
@@ -78,15 +117,14 @@ const userSchema = new Schema({
     timestamps: true
 });
 
-/*
- * A pre-save hook for hashing the pwd
- */
+
+// A pre-save hook for hashing the pwd
 userSchema.pre('save', function(next) {
     let user = this;
     if (!user.isModified("password")) {
         return next();
     }
-    var pw = user.password;
+    const pw = user.password;
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(pw, salt, (err, hash) => {
             if (err) return next(err);
@@ -98,15 +136,49 @@ userSchema.pre('save', function(next) {
     });
 });
 
-// and a pre save hook for getting the latitude and longitude
-userSchema.pre('save', function(next) {
-    if (!this.isModified("location")) {
+// a pre save hook for converting email to lowercase
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("email")) {
         return next();
     }
+    let email = user.email;
+    user.email = email.toLowerCase();
+});
+
+// a pre save hook for proper formatting for the name
+userSchema.pre('save', function(next) {
     let user = this;
-    var state = user.location.state;
+    if (!user.isModified("name")) {
+        return next();
+    }
+    const first = user.name.first;
+    const last = user.name.last;
+    const firstFormatted = properFormat(first);
+    const lastFormatted = properFormat(last);
+    user.name.first = firstFormatted;
+    user.name.last = lastFormatted;
+    next();
+});
+
+// a pre save hook for getting the latitude and longitude and setting the meeting place to same as
+// location if they are a homeowner and meeting place has not been set yet
+userSchema.pre('save', function(next) {
+    let user = this;
+    if (!user.isModified("location")) {
+        return next();
+    }
+
+    // formatting the address properly
+    let state = user.location.state;
     state = state.toUpperCase();
     user.location.state = state;
+
+    const addr = user.location.address;
+    user.location.address = properFormat(addr);
+
+    const city = user.location.city;
+    user.location.city = properFormat(city);
 
     gmClient.geocode({
         address: user.location.address + " " + user.location.city + " " + user.location.state + " " + user.location.zip
@@ -119,11 +191,95 @@ userSchema.pre('save', function(next) {
             console.log(response.json.results[0].geometry);
             user.location.lat = response.json.results[0].geometry.location.lat;
             user.location.long = response.json.results[0].geometry.location.lng;
-            console.log(user.location.lat + " " + user.location.long);
-            next();
+            console.log("lat: " + user.location.lat + " long: " + user.location.long);
         }
     });
+    console.log(user.homeownerInfo.meetingPlace);
+    // default to set homeowner meeting place to the location if the meeting place is null
+    if (user.accountType === "Homeowner" && is.not.existy(user.homeownerInfo.meetingPlace)) {
+        user.homeownerInfo.meetingPlace = user.location;
+    }
+    next();
+});
 
+// a pre save hook for getting the latitude and longitude
+// of the meeting place and proper formatting everything properly
+userSchema.pre('save', function(next) {
+    let user = this;
+    if (!user.isModified("homeownerInfo.meetingPlace")) {
+        return next();
+    }
+
+    // formatting the address properly
+    let state = user.homeownerInfo.meetingPlace.state;
+    state = state.toUpperCase();
+    user.homeownerInfo.meetingPlace.state = state;
+
+    const addr = user.homeownerInfo.meetingPlace.address;
+    user.homeownerInfo.meetingPlace.address = properFormat(addr);
+
+    const city = user.homeownerInfo.meetingPlace.city;
+    user.homeownerInfo.meetingPlace.city = properFormat(city);
+
+    gmClient.geocode({
+        address: user.homeownerInfo.meetingPlace.address + " " + user.homeownerInfo.meetingPlace.city + " " + user.homeownerInfo.meetingPlace.state + " " + user.homeownerInfo.meetingPlace.zip
+    }, function(err, response) {
+        if (err) {
+            console.log(err);
+            return next(err);
+        }
+        else {
+            console.log(response.json.results[0].geometry);
+            user.homeownerInfo.meetingPlace.lat = response.json.results[0].geometry.location.lat;
+            user.homeownerInfo.meetingPlace.long = response.json.results[0].geometry.location.lng;
+            console.log("lat: " + user.homeownerInfo.meetingPlace.lat + " long: " + user.homeownerInfo.meetingPlace.long);
+        }
+    });
+    next();
+});
+
+// pre save hook for capitalizing allowed items
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("allowedItems")) {
+        return next();
+    }
+    let allowedItems = user.allowedItems;
+    user.allowedItems = capitalizedFormat(allowedItems);
+    next();
+});
+
+// pre save hook for capitalizing prohibited items
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("prohibitedItems")) {
+        return next();
+    }
+    let prohibited = user.prohibitedItems;
+    user.prohibitedItems = capitalizedFormat(prohibited);
+    next();
+});
+
+// pre save hook for proper formatting the business name
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("businessOwnerInfo.businessName")) {
+        return next();
+    }
+    let bName = user.businessOwnerInfo.businessName;
+    user.businessOwnerInfo.businessName = properFormat(bName);
+    next();
+});
+
+// pre save hook for lowercasing the business website url
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("businessOwnerInfo.businessWebsite")) {
+        return next();
+    }
+    let bWebsite = user.businessOwnerInfo.businessWebsite;
+    user.businessOwnerInfo.businessWebsite = bWebsite.toLowercase();
+    next();
 });
 
 /*
