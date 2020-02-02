@@ -4,6 +4,7 @@ let bcrypt = require('bcryptjs');
 let is = require('is_js');
 let properFormat = require('../helpers/properFormat');
 let capitalizedFormat = require('../helpers/capitalizedFormat');
+let isValidStateAbbreviation = require('../helpers/isValidStateAbbreviation');
 mongoose.set('useFindAndModify', false);
 
 let gmApi = require('@google/maps');
@@ -44,7 +45,13 @@ const userSchema = new Schema({
         state: { // capitalized in a pre save hook
             type: String, 
             minlength: 2,
-            maxlength: 2
+            maxlength: 2,
+            validate: {
+                validator: function(st) {
+                    return isValidStateAbbreviation(st.toUpperCase());
+                },
+                message: props => `${props.value} is not a valid state abbreviation!`
+            }
         },      
         zip: { // can only be a us zip code at this point
             type: Number,
