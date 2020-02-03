@@ -20,39 +20,39 @@ router.post("/register", async (req, res) => {
 
   // checking if the body contains valid input, if not, return a 400 BAD REQUEST with a FormattingError
   if (is.not.string(json.email) || is.not.email(json.email)) {
-      res.status(400).send({success: false, error: "FormattingError: email"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: email"})
   }
   else if (is.not.string(json.password)) {
-      res.status(400).send({success: false, "error": "FormattingError: password"})
+      res.status(400).send({registrationStatus: false, "error": "FormattingError: password"})
   }
   else if (is.not.object(json.name)) {
-      res.status(400).send({success: false, error: "FormattingError: name"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: name"})
   }
   else if (is.not.string(json.name.first)) {
-      res.status(400).send({success: false, error: "FormattingError: name.first"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: name.first"})
   }
   else if (is.not.string(json.name.last)) {
-      res.status(400).send({success: false, error: "FormattingError: name.last"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: name.last"})
   }
   else if (is.not.string(json.accountType) || is.not.inArray(json.accountType, ["Contributor", "Homeowner", "Business Owner", "System Admin"])) {
-      res.status(400).send({success: false, error: "FormattingError: accountType"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: accountType"})
   }
   else if (is.not.object(json.location)) {
-      res.status(400).send({success: false, error: "FormattingError: location"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: location"})
   }
   else if (is.not.string(json.location.address)) {
-      res.status(400).send({success: false, error: "FormattingError: location.address"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: location.address"})
   }
   else if (is.not.string(json.location.city)) {
-      res.status(400).send({success: false, error: "FormattingError: location.city"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: location.city"})
   }
   else if (is.not.string(json.location.state) ||
       !isValidStateAbbreviation(json.location.state.toUpperCase())) {
-      res.status(400).send({success: false, error: "FormattingError: location.state"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: location.state"})
   }
   else if (is.not.number(json.location.zip) ||
       is.not.usZipCode(json.location.zip.toString())) {
-      res.status(400).send({success: false, error: "FormattingError: location.zip"})
+      res.status(400).send({registrationStatus: false, error: "FormattingError: location.zip"})
   }
   // if no bad data was found, create a new user using the data!
   else {
@@ -77,10 +77,10 @@ router.post("/register", async (req, res) => {
       newUser.save(function (err, data) {
           if (err) {
               console.log(err);
-              res.status(500).send({success: false, error: err});
+              res.status(500).send({registrationStatus: false, error: err});
           } else {
               console.log(data);
-              res.status(201).send({success: true});
+              res.status(201).send({registrationStatus: true});
           }
       });
   } // end of else to check if valid
@@ -98,17 +98,17 @@ router.post('/login', async (req, res) => {
   const password = json.password;
   console.log(email);
   await User.findOne({ email: email }).exec(function (err, user) {
-      if (err) return res.status(500).send({success: false, error: err});
+      if (err) return res.status(500).send({loginStatus: false, error: err});
       else {
           if(!user) {
-              return res.status(404).send({ success: false, error: "UserNotFound" });
+              return res.status(404).send({ loginStatus: false, error: "UserNotFound" });
           }
 
           const passwordMatch = bcrypt.compareSync(password, user.password);
           if(!passwordMatch) {
-              return res.status(401).send({ success: false, error: "WrongCredentials"});
+              return res.status(401).send({ loginStatus: false, error: "WrongCredentials"});
           }
-          return res.status(200).send({success: true, "accountType": user.accountType, "id": user._id});
+          return res.status(200).send({loginStatus: true, "accountType": user.accountType, "id": user._id});
       }
   });
 }); // end of login route impl
