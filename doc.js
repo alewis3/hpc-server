@@ -218,44 +218,45 @@
  * @apiParam {String} id The user's ID, send in the query string
  *
  * @apiSuccess {Boolean} success This will be true if the read was successful.
- * @apiSuccess {String} email The user's email.
- * @apiSuccess {Object} name An object containing "first" and "last" fields.
- * @apiSuccess {String} name.first The user's first name.
- * @apiSuccess {String} name.last The user's last name.
- * @apiSuccess {String="Contributor", "Homeowner", "Business Owner"} accountType The account type of the user.
- * @apiSuccess {Object} location An object containing "address", "city", "state", "zip", "lat", and "long" fields.
- * @apiSuccess {String} location.address The user's street address including number and street name.
- * @apiSuccess {String} location.city The user's city e.g. "Austin" or "Dallas".
- * @apiSuccess {String{2}} location.state The user's state in this format: Texas -> "TX" or California -> "CA", etc.
- * @apiSuccess {Number} location.zip The user's zip code in number format (5 digits and valid US zip).
- * @apiSuccess {Number} location.lat The user's (calculated) latitude
- * @apiSuccess {Number} location.long The user's (calculated) longitude
- * @apiSuccess {String} [allowedItems] *Only for Hosts* The items they allow in their compost bin.
- * @apiSuccess {String} [prohibitedItems] *Only for Hosts* The items they prohibit in their compost bin.
- * @apiSuccess {Number} radius For contributors, the farthest they are willing to search for hosts, for Hosts, it is the farthest they want their post to display for contributors.
+ * @apiSuccess {Object} user An object containing all user data.
+ * @apiSuccess {String} user.email The user's email.
+ * @apiSuccess {Object} user.name An object containing "first" and "last" fields.
+ * @apiSuccess {String} user.name.first The user's first name.
+ * @apiSuccess {String} user.name.last The user's last name.
+ * @apiSuccess {String="Contributor", "Homeowner", "Business Owner"} user.accountType The account type of the user.
+ * @apiSuccess {Object} user.location An object containing "address", "city", "state", "zip", "lat", and "long" fields.
+ * @apiSuccess {String} user.location.address The user's street address including number and street name.
+ * @apiSuccess {String} user.location.city The user's city e.g. "Austin" or "Dallas".
+ * @apiSuccess {String{2}} user.location.state The user's state in this format: Texas -> "TX" or California -> "CA", etc.
+ * @apiSuccess {Number} user.location.zip The user's zip code in number format (5 digits and valid US zip).
+ * @apiSuccess {Number} user.location.lat The user's (calculated) latitude
+ * @apiSuccess {Number} user.location.long The user's (calculated) longitude
+ * @apiSuccess {String} [user.allowedItems] *Only for Hosts* The items they allow in their compost bin.
+ * @apiSuccess {String} [user.prohibitedItems] *Only for Hosts* The items they prohibit in their compost bin.
+ * @apiSuccess {Number} user.radius For contributors, the farthest they are willing to search for hosts, for Hosts, it is the farthest they want their post to display for contributors.
  *
- * @apiSuccess {Object} [homeownerInfo] An object with information specific to homeowners.
- * @apiSuccess {Object} [homeownerInfo.meetingPlace] The address where the homeowner meets contributors (May be different than their address).
- * @apiSuccess {String} [homeownerInfo.meetingPlace.address] The street address where the homeowner meets contributors.
- * @apiSuccess {String} [homeownerInfo.meetingPlace.city] The city where the homeowner meets contributors.
- * @apiSuccess {String{2}} [homeownerInfo.meetingPlace.state] The state where the homeowner meets contributors.
- * @apiSuccess {Number} [homeownerInfo.meetingPlace.zip] The zip code where the homeowner meets contributors.
- * @apiSuccess {Number} [homeownerInfo.meetingPlace.lat] The calculated latitude of the meeting place address.
- * @apiSuccess {Number} [homeownerInfo.meetingPlace.long] The calculated longitude of the meeting place address.
- * @apiSuccess {Boolean} [homeownerInfo.isListingOn] A boolean representing whether their listing is active or not.
+ * @apiSuccess {Object} [user.homeownerInfo] An object with information specific to homeowners.
+ * @apiSuccess {Object} [user.homeownerInfo.meetingPlace] The address where the homeowner meets contributors (May be different than their address).
+ * @apiSuccess {String} [user.homeownerInfo.meetingPlace.address] The street address where the homeowner meets contributors.
+ * @apiSuccess {String} [user.homeownerInfo.meetingPlace.city] The city where the homeowner meets contributors.
+ * @apiSuccess {String{2}} [user.homeownerInfo.meetingPlace.state] The state where the homeowner meets contributors.
+ * @apiSuccess {Number} [user.homeownerInfo.meetingPlace.zip] The zip code where the homeowner meets contributors.
+ * @apiSuccess {Number} [user.homeownerInfo.meetingPlace.lat] The calculated latitude of the meeting place address.
+ * @apiSuccess {Number} [user.homeownerInfo.meetingPlace.long] The calculated longitude of the meeting place address.
+ * @apiSuccess {Boolean} [user.homeownerInfo.isListingOn] A boolean representing whether their listing is active or not.
  *
- * @apiSuccess {Object} [businessOwnerInfo] An object with information specific to business owners.
- * @apiSuccess {Boolean} [businessOwnerInfo.isListingOn] A boolean representing whether their listing is active or not.
- * @apiSuccess {String} [businessOwnerInfo.businessName] The business's name.
- * @apiSuccess {String} [businessOwnerInfo.businessWebsite] A link to the business's website.
- * @apiSuccess {String} [businessOwnerInfo.contributorCharge] The amount of money the business owner wants to charge for people contributing.
+ * @apiSuccess {Object} [user.businessOwnerInfo] An object with information specific to business owners.
+ * @apiSuccess {Boolean} [user.businessOwnerInfo.isListingOn] A boolean representing whether their listing is active or not.
+ * @apiSuccess {String} [user.businessOwnerInfo.businessName] The business's name.
+ * @apiSuccess {String} [user.businessOwnerInfo.businessWebsite] A link to the business's website.
+ * @apiSuccess {String} [user.businessOwnerInfo.contributorCharge] The amount of money the business owner wants to charge for people contributing.
  *
- * @apiSuccess {Object[]} [blockedUsers] A list of objects containing the users this user has blocked
- * @apiSuccess {String} [blockedUsers._id] The blocked user's _id
- * @apiSuccess {String} [blockedUsers.email] The blocked user's email
- * @apiSuccess {Object} [blockedUsers.name] An object containing the blocked user's name
- * @apiSuccess {String} [blockedUsers.name.first] The blocked user's first name
- * @apiSuccess {String} [blockedUsers.name.last] The blocked user's last name
+ * @apiSuccess {Object[]} [user.blockedUsers] A list of objects containing the users this user has blocked
+ * @apiSuccess {String} [user.blockedUsers._id] The blocked user's _id
+ * @apiSuccess {String} [user.blockedUsers.email] The blocked user's email
+ * @apiSuccess {Object} [user.blockedUsers.name] An object containing the blocked user's name
+ * @apiSuccess {String} [user.blockedUsers.name.first] The blocked user's first name
+ * @apiSuccess {String} [user.blockedUsers.name.last] The blocked user's last name
  *
  * @apiError {Boolean} success This will be false if there was some sort of error.
  * @apiError {String} error A description of what error occurred.
