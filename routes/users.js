@@ -183,8 +183,8 @@ router.get('/hosts', async function(req, res) {
         var clong = user.location.long;
         var cradius = user.radius;
 
-        // find all business owners in range
-        let businessOwners = User.find({accountType: "Business Owner"}).select("location.lat location.long radius allowedItems prohibitedItems businessOwnerInfo name").exec(function (err, businessOwners) {
+        // find all business owners in range and not blocked by this user or have blocked this user
+        let businessOwners = User.find({_id: {$nin: user.blockedUsers, $nin: user.blockedBy}, accountType: "Business Owner"}).select("location.lat location.long radius allowedItems prohibitedItems businessOwnerInfo name").exec(function (err, businessOwners) {
             if (err) {
                 return res.status(500).send({success: false, error: err});
             }
@@ -194,15 +194,15 @@ router.get('/hosts', async function(req, res) {
                     let hradius = bo.radius;
                     let hlat = bo.location.lat;
                     let hlong = bo.location.long;
-                    return withinRange(clat, clong, cradius, hlat, hlong, hradius);
+                    return withinRange(clat, clong, cradius, hlat, hlong, hradius));
                 });
                 // this call is reformatting the business owner objects to have keys to match the documentation
                 return reformatBusinessOwners(filtered);
             }
         });
 
-        // find all homeowners in range
-        let homeowners = User.find({accountType: "Homeowner"}).select("homeownerInfo.meetingPlace.lat homeownerInfo.meetingPlace.long radius allowedItems prohibitedItems name homeowerInfo.isListingOn").exec(function (err, homeowners) {
+        // find all homeowners in range and not blocked by the user
+        let homeowners = User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Homeowner"}).select("homeownerInfo.meetingPlace.lat homeownerInfo.meetingPlace.long radius allowedItems prohibitedItems name homeowerInfo.isListingOn").exec(function (err, homeowners) {
             if (err) {
                 return res.status(500).send({success: false, error: err});
             }
