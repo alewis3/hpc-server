@@ -20,38 +20,49 @@ router.post("/register", async (req, res) => {
 
   // checking if the body contains valid input, if not, return a 400 BAD REQUEST with a FormattingError
   if (is.not.string(json.email) || is.not.email(json.email)) {
+      console.log("invalid email");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: email"})
   }
   else if (is.not.string(json.password)) {
+      console.log("invalid password");
       return res.status(400).send({registrationStatus: false, "error": "FormattingError: password"})
   }
   else if (is.not.object(json.name)) {
+      console.log("invalid name");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: name"})
   }
   else if (is.not.string(json.name.first)) {
+      console.log("invalid first name");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: name.first"})
   }
   else if (is.not.string(json.name.last)) {
+      console.log("invalid last name");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: name.last"})
   }
   else if (is.not.string(json.accountType) || is.not.inArray(json.accountType, ["Contributor", "Homeowner", "Business Owner", "System Admin"])) {
+      console.log("invalid accountType");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: accountType"})
   }
   else if (is.not.object(json.location)) {
+      console.log("invalid location");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: location"})
   }
   else if (is.not.string(json.location.address)) {
+      console.log("invalid address");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: location.address"})
   }
   else if (is.not.string(json.location.city)) {
+      console.log("invalid city");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: location.city"})
   }
   else if (is.not.string(json.location.state) ||
       !isValidStateAbbreviation(json.location.state.toUpperCase())) {
+      console.log("invalid state");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: location.state"})
   }
   else if (is.not.number(json.location.zip) ||
       is.not.usZipCode(json.location.zip.toString())) {
+      console.log("invalid zip");
       return res.status(400).send({registrationStatus: false, error: "FormattingError: location.zip"})
   }
   // if no bad data was found, create a new user using the data!
