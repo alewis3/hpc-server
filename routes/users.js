@@ -194,7 +194,7 @@ router.get('/hosts', async function(req, res) {
                     let hradius = bo.radius;
                     let hlat = bo.location.lat;
                     let hlong = bo.location.long;
-                    return withinRange(clat, clong, cradius, hlat, hlong, hradius));
+                    return withinRange(clat, clong, cradius, hlat, hlong, hradius);
                 });
                 // this call is reformatting the business owner objects to have keys to match the documentation
                 return reformatBusinessOwners(filtered);
