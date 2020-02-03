@@ -56,7 +56,7 @@
 /**
  * @api {get} /preferences/allowedItems?id=XX Get allowed items
  * @apiName GetAllowedItems
- * @apiGroup Preferences.Specific.Allowed
+ * @apiGroup Preferences.Specific
  * @apiDescription C - This route will be called when a user wants to check their allowed items
  *
  * @apiParam {String} id The id of the user to get
@@ -85,7 +85,7 @@
 /**
  * @api {get} /preferences/prohibitedItems?id=XX Get prohibited items
  * @apiName GetProhibitedItems
- * @apiGroup Preferences.Specific.Prohibited
+ * @apiGroup Preferences.Specific
  * @apiDescription C - This route will be called when a user wants to check their prohibited items
  *
  * @apiParam {String} id The id of the user to get
@@ -114,7 +114,7 @@
 /**
  * @api {post} /preferences/allowedItems Save allowed items
  * @apiName PostAllowedItems
- * @apiGroup Preferences.Specific.Allowed
+ * @apiGroup Preferences.Specific
  * @apiDescription C - This route will be called when a user sets or updates their allowed items
  *
  * @apiParam {String} id The id of the user to set
@@ -138,7 +138,7 @@
 /**
  * @api {post} /preferences/prohibitedItems Save prohibited items
  * @apiName PostProhibitedItems
- * @apiGroup Preferences.Specific.Prohibited
+ * @apiGroup Preferences.Specific
  * @apiDescription C - This route will be called when a user sets or updates their prohibited items
  *
  * @apiParam {String} id The id of the user to set
@@ -386,7 +386,7 @@
 /**
  * @api {patch} /preferences/enableListing Enable a host's listing
  * @apiName PatchEnableListing
- * @apiGroup Preferences.Specific.IsListingOn
+ * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will enable a host's listing with only one parameter: the host's id.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
@@ -407,7 +407,7 @@
 /**
  * @api {patch} /preferences/disableListing Disable a host's listing
  * @apiName PatchDisableListing
- * @apiGroup Preferences.Specific.IsListingOn
+ * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will disable a host's listing with only one parameter: the host's id.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
@@ -428,7 +428,7 @@
 /**
  * @api {patch} /preferences/updateListing Update a host's listing as active or inactive
  * @apiName PatchUpdateListing
- * @apiGroup Preferences.Specific.IsListingOn
+ * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will update a host's listing.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
@@ -450,7 +450,7 @@
 /**
  * @api {get} /preferences/isListingOn Get a host's current listing status
  * @apiName PatchGetListing
- * @apiGroup Preferences.Specific.IsListingOn
+ * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will get a host's listing status.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
@@ -478,7 +478,7 @@
 /**
  * @api {post} /users/register Create/register a new user
  * @apiName CreateUser
- * @apiGroup Users.RegisterLogin
+ * @apiGroup Users
  * @apiDescription C - This route handles registering a user. The request will include an email, password, first and last name, account type, and a birthday in string format.
  *
  * @apiParam {String} email A unique email to register with (This acts as their username)
@@ -538,7 +538,7 @@
  *
  * @api {post} /users/login Authenticate a user for login
  * @apiName LoginUser
- * @apiGroup Users.RegisterLogin
+ * @apiGroup Users
  * @apiDescription C - This route handles authenticating a user when they want to login.
  *
  * @apiParam {String} email The email that the user signed up with
@@ -582,8 +582,8 @@
 /**
  * @api {get} /users/hosts?id=X Get all nearby hosts location
  * @apiName GetHosts
- * @apiGroup Users.Hosts
- * @apiDescription WIP - This endpoint limits the search of hosts by the radius of that user and the radius of each individual host. Will return a list of homeowners and business owners in range and not blocked.
+ * @apiGroup Users
+ * @apiDescription C - This endpoint limits the search of hosts by the radius of that user and the radius of each individual host. Will return a list of homeowners and business owners in range and not blocked.
  *
  * @apiParam {String} userId Sent in the request url, the user id of the user you want to match by.
  *
@@ -681,8 +681,8 @@
 /**
  * @api {get} /users/hostsAll?id=X Get all hosts location
  * @apiName GetHostsAll
- * @apiGroup Users.Hosts
- * @apiDescription WIP - This endpoint returns all hosts registered.
+ * @apiGroup Users
+ * @apiDescription C - This endpoint returns all hosts registered.
  *
  * @apiParam {String} userId Sent in the request url, the user id of the user you want to match by.
  *
@@ -780,7 +780,7 @@
 /**
  * @api {post} /users/resetPassword Reset a user's password
  * @apiName ResetPassword
- * @apiGroup Users.Password
+ * @apiGroup Users
  * @apiDescription C - This route handles resetting a password
  *
  * @apiParam {String} id The id of the user
@@ -811,7 +811,7 @@
 /**
  * @api {patch} /users/blockUser Blocks a user
  * @apiName PatchBlockUser
- * @apiGroup Users.Blocking
+ * @apiGroup Users
  * @apiDescription NI - This route lets a user (blockingUser) block another user (blockedUser).
  *
  * @apiParam {String} blockingUser The user that wants to block another user.
@@ -839,7 +839,7 @@
 /**
  * @api {patch} /users/unblockUser Unblocks a user
  * @apiName PatchUnblockUser
- * @apiGroup Users.Blocking
+ * @apiGroup Users
  * @apiDescription NI - This route lets a user (unblockingUser) unblock another user (unblockedUser).
  *
  * @apiParam {String} unblockingUser The user that wants to unblock another user.
