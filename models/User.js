@@ -155,6 +155,7 @@ userSchema.pre('save', function (next) {
     }
     let email = user.email;
     user.email = email.toLowerCase();
+    next();
 });
 
 // a pre save hook for proper formatting for the name
