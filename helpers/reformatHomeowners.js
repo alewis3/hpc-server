@@ -34,11 +34,14 @@ module.exports = function(homeownersArray) {
         let orig = homeownersArray[i];
         var newHO = {
             _id: orig._id,
-            radius: orig.radius,
             location: {
                 lat: orig.homeownerInfo.meetingPlace.lat,
                 long: orig.homeownerInfo.meetingPlace.long
-            }
+            },
+            allowedItems: orig.allowedItems,
+            prohibitedItems: orig.prohibitedItems,
+            name: orig.name,
+            isListingOn: orig.homeownerInfo.isListingOn
         };
         newHomeownersArray.push(newHO);
     }

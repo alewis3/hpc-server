@@ -30,7 +30,14 @@ module.exports = function(hostsArray) {
         let orig = hostsArray[i];
         var newHost = {
             _id: orig._id,
-            location: orig.location
+            location: orig.location,
+            allowedItems: orig.allowedItems,
+            prohibitedItems: orig.prohibitedItems,
+            businessName: orig.businessOwnerInfo.businessName,
+            businessWebsite: orig.businessOwnerInfo.businessWebsite,
+            contributorCharge: orig.businessOwnerInfo.contributorCharge,
+            name: orig.name,
+            isListingOn: orig.businessOwnerInfo.isListingOn
         };
         newHostsArray.push(newHost);
     }
