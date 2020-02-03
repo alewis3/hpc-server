@@ -160,7 +160,7 @@
  */
 
 /**
- * @api {patch} /preferences/profile Modify or update a user's profile
+ * @api {patch} /preferences/profile * Modify or update a user's profile
  * @apiName PatchProfile
  * @apiGroup Preferences.General
  * @apiDescription NI - This path will be called on whenever the user makes changes to their account and presses save. All fields are optional but at least one must be sent in for the request call to make sense.
@@ -210,7 +210,7 @@
  */
 
 /**
- * @api {get} /preferences/profile?id=XX Grab all profile info for a user
+ * @api {get} /preferences/profile?id=XX * Grab all profile info for a user
  * @apiName GetProfile
  * @apiGroup Preferences.General
  * @apiDescription NI - This path will be called on whenever the user wants to view their profile information. The response body for this is LARGE, but many fields are optional.
@@ -384,7 +384,7 @@
  */
 
 /**
- * @api {patch} /preferences/enableListing Enable a host's listing
+ * @api {patch} /preferences/enableListing * Enable a host's listing
  * @apiName PatchEnableListing
  * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will enable a host's listing with only one parameter: the host's id.
@@ -405,7 +405,7 @@
  */
 
 /**
- * @api {patch} /preferences/disableListing Disable a host's listing
+ * @api {patch} /preferences/disableListing * Disable a host's listing
  * @apiName PatchDisableListing
  * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will disable a host's listing with only one parameter: the host's id.
@@ -426,7 +426,7 @@
  */
 
 /**
- * @api {patch} /preferences/updateListing Update a host's listing as active or inactive
+ * @api {patch} /preferences/updateListing * Update a host's listing as active or inactive
  * @apiName PatchUpdateListing
  * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will update a host's listing.
@@ -448,7 +448,7 @@
  */
 
 /**
- * @api {get} /preferences/isListingOn Get a host's current listing status
+ * @api {get} /preferences/isListingOn * Get a host's current listing status
  * @apiName PatchGetListing
  * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will get a host's listing status.
@@ -470,6 +470,71 @@
  *          "success": true,
  *          "isListingOn": true/false
  *      }
+ *
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
+ * @api {patch} /preferences/homeownerInfo * Update a homeowner's info
+ * @apiName PatchHomeownerInfo
+ * @apiGroup Preferences.Specific
+ * @apiDescription NI - This route will allow you to update or set a homeowner's info, including allowed/prohibitedItems, meetingPlace, display radius, and isListingOn. These fields are optional, but send in at least one so the request has something to do.
+ *
+ * @apiParam {String} id The id of the user to edit (*Must be a Homeowner!*)
+ * @apiParam {String} [allowedItems] The items they allow.
+ * @apiParam {String} [prohibitedItems] The items they prohibit.
+ * @apiParam {Object} [meetingPlace] An object containing address information on where they want to meet.
+ * @apiParam {String} [meetingPlace.address] The address of the meeting place.
+ * @apiParam {String} [meetingPlace.city] The city of the meeting place.
+ * @apiParam {String{2}} [meetingPlace.state] The state of the meeting place (in two-letter abbreviation format i.e. 'TX' or 'CA')
+ * @apiParam {Number} [meetingPlace.zip] The zip of the meeting place.
+ * @apiParam {Boolean} [isListingOn] Whether or not their listing should be active.
+ * @apiParam {Number} [radius] The distance (in miles) of how far they want their post to display.
+ *
+ * @apiSuccess {Boolean} success Will be true if the homeowner's info could be successfully updated.
+ *
+ * @apiError {Boolean} success Will be false if some error occurred.
+ * @apiError {String} error A description of what error occurred.
+ *
+ * @apiError (500) {Boolean} success Will be false if some server error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ *
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
+ * @api {patch} /preferences/businessOwnerInfo * Update a business owner's info
+ * @apiName PatchBusinessOwnerInfo
+ * @apiGroup Preferences.Specific
+ * @apiDescription NI - This route will allow you to update or set a business owner's info, including allowed/prohibitedItems, business name, business website, contributor charge (if any), display radius, and isListingOn, but also the location (which every user has). For the business owner, the location should be the same as the business address. These fields are optional, but send in at least one so the request has something to do.
+ *
+ * @apiParam {String} id The id of the user to edit (*Must be a Business Owner!*)
+ * @apiParam {String} [allowedItems] The items they allow.
+ * @apiParam {String} [prohibitedItems] The items they prohibit.
+ * @apiParam {String} [businessName] The name of the business
+ * @apiParam {String} [businessWebsite] The website of the business.
+ * @apiParam {Object} [location] An object containing address information oof the business.
+ * @apiParam {String} [location.address] The address of the business.
+ * @apiParam {String} [location.city] The city of the business.
+ * @apiParam {String{2}} [location.state] The state of the business (in two-letter abbreviation format i.e. 'TX' or 'CA')
+ * @apiParam {Number} [location.zip] The zip of the business.
+ * @apiParam {Number} [contributorCharge] How much they charge contributors to contribute.
+ * @apiParam {Boolean} [isListingOn] Whether or not their listing should be active.
+ * @apiParam {Number} [radius] The distance (in miles) of how far they want their post to display from their location/business address.
+ *
+ * @apiSuccess {Boolean} success Will be true if the business owner's info could be successfully updated.
+ *
+ * @apiError {Boolean} success Will be false if some error occurred.
+ * @apiError {String} error A description of what error occurred.
+ *
+ * @apiError (500) {Boolean} success Will be false if some server error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
  *
  * @apiUse IdNotFoundError
  * @apiUse ServerError
@@ -809,7 +874,7 @@
  */
 
 /**
- * @api {patch} /users/blockUser Blocks a user
+ * @api {patch} /users/blockUser * Blocks a user
  * @apiName PatchBlockUser
  * @apiGroup Users
  * @apiDescription NI - This route lets a user (blockingUser) block another user (blockedUser).
@@ -837,7 +902,7 @@
  */
 
 /**
- * @api {patch} /users/unblockUser Unblocks a user
+ * @api {patch} /users/unblockUser * Unblocks a user
  * @apiName PatchUnblockUser
  * @apiGroup Users
  * @apiDescription NI - This route lets a user (unblockingUser) unblock another user (unblockedUser).
