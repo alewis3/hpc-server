@@ -141,29 +141,15 @@ router.get('/hostsAll', async function(req, res) {
     else {
 
         // find all business owners
-        let businessOwners = User.find({accountType: "Business Owner"}).select("location.lat location.long radius allowedItems prohibitedItems businessOwnerInfo name").exec(function (err, businessOwners) {
-            if (err) {
-                return err;
-            }
-            else {
-                // this call is reformatting the business owner objects to have keys to match the documentation
-                return reformatBusinessOwners(businessOwners);
-            }
-        });
+        let businessOwners = await User.find({accountType: "Business Owner"}).exec();
 
         // find all homeowners
-        let homeowners = User.find({accountType: "Homeowner"}).select("homeownerInfo.meetingPlace.lat homeownerInfo.meetingPlace.long radius allowedItems prohibitedItems name homeowerInfo.isListingOn").exec(function (err, homeowners) {
-            if (err) {
-                return res.status(500).send({success: false, error: err});
-            }
-            else {
-                // this call is reformatting the homeowner objects to have keys to match the documentation
-                return reformatHomeowers(homeowners);
-            }
-        });
+        let homeowners = await User.find({accountType: "Homeowner"}).exec();
 
+        businessOwners = reformatBusinessOwners(businessOwners);
+        homeowners = reformatHomeowers(homeowners);
         // if both lists are empty, return a 204
-        if (businessOwners.length === 0 && homeowners.length === 0) {
+        if (!businessOwners && !homeowners) {
             return res.status(204).send({success: true, homeowners: [], businessOwners: []});
         }
         // otherwise return the lists as they are
