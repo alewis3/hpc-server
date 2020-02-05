@@ -210,10 +210,10 @@
  */
 
 /**
- * @api {get} /preferences/profile?id=XX * Grab all profile info for a user
+ * @api {get} /preferences/profile?id=XX Grab all profile info for a user
  * @apiName GetProfile
  * @apiGroup Preferences.General
- * @apiDescription NI - This path will be called on whenever the user wants to view their profile information. The response body for this is LARGE, but many fields are optional.
+ * @apiDescription C - This path will be called on whenever the user wants to view their profile information. The response body for this is LARGE, but many fields are optional.
  *
  * @apiParam {String} id The user's ID, send in the query string
  *
