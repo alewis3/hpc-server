@@ -268,116 +268,122 @@
  *      HTTP/1.1 200 OK
  *      {
  *          "success": true
- *          "email": "alewis3@stedwards.edu",
- *          "name": {
- *              "first": "Amanda",
- *              "last": "Lewis"
- *          },
- *          "accountType": "Contributor",
- *          "location": {
- *              "address": "6600 Delmonico Dr.",
- *              "city": "Austin",
- *              "state": "TX",
- *              "zip": 78759,
- *              "lat" : 30.4070384,
- *              "long" : -97.77170149999999
- *          },
- *          radius: 5,
- *          blockedUsers: [
- *              {
- *                  "_id": "5e2f1c8eec53c15ae2cb96e4"
- *                  "email": "eisis@stedwards.edu"
- *                  "name": {
- *                      "first": "Evangeline",
- *                      "last": "Mavrommati"
- *                  }
+ *          "user": {
+ *              "email": "alewis3@stedwards.edu",
+ *              "name": {
+ *                  "first": "Amanda",
+ *                  "last": "Lewis"
  *              },
- *              ...
- *          ]
+ *              "accountType": "Contributor",
+ *              "location": {
+ *                  "address": "6600 Delmonico Dr.",
+ *                  "city": "Austin",
+ *                  "state": "TX",
+ *                  "zip": 78759,
+ *                  "lat" : 30.4070384,
+ *                  "long" : -97.77170149999999
+ *              },
+ *              radius: 5,
+ *              blockedUsers: [
+ *                  {
+ *                      "_id": "5e2f1c8eec53c15ae2cb96e4"
+ *                      "email": "eisis@stedwards.edu"
+ *                      "name": {
+ *                          "first": "Evangeline",
+ *                          "last": "Mavrommati"
+ *                      }
+ *                  },
+ *                  ...
+ *              ]
+ *          }
  *      }
  *
  * @apiSuccessExample SuccessfulHomeownerResponse:
  *      HTTP/1.1 200 OK
  *      {
  *          "success": true
- *          "email": "alewis3@stedwards.edu",
- *          "name": {
- *              "first": "Amanda",
- *              "last": "Lewis"
- *          },
- *          "accountType": "Homeowner",
- *          "location": {
- *              "address": "6600 Delmonico Dr.",
- *              "city": "Austin",
- *              "state": "TX",
- *              "zip": 78759,
- *              "lat" : 30.4070384,
- *              "long" : -97.77170149999999
- *          },
- *          "allowedItems": "Cardboard, food waste, dried leaves.",
- *          "prohibitedItems": "Meat, egg shells.",
- *          "homeownerInfo": {
- *              "isListingOn": true,
- *              "meetingPlace": {
- *                  "address" : "1109 S. Pleasant Valley Rd.",
- *                  "city" : "Austin",
- *                  "state" : "TX",
- *                  "zip" : 78741,
- *                  "lat" : 30.2403158,
- *                  "long" : -97.71805909999999
- *              }
- *          },
- *          radius: 8,
- *          blockedUsers: [
- *              {
- *                  "_id": "5e2f1c8eec53c15ae2cb96e4"
- *                  "email": "eisis@stedwards.edu"
- *                  "name": {
- *                      "first": "Evangeline",
- *                      "last": "Mavrommati"
+ *          "user": {
+ *              "email": "alewis3@stedwards.edu",
+ *              "name": {
+ *                  "first": "Amanda",
+ *                  "last": "Lewis"
+ *              },
+ *              "accountType": "Contributor",
+ *              "location": {
+ *                  "address": "6600 Delmonico Dr.",
+ *                  "city": "Austin",
+ *                  "state": "TX",
+ *                  "zip": 78759,
+ *                  "lat" : 30.4070384,
+ *                  "long" : -97.77170149999999
+ *              },
+ *              radius: 5,
+ *              "allowedItems": "Cardboard, food waste, dried leaves.",
+ *              "prohibitedItems": "Meat, egg shells.",
+ *              "homeownerInfo": {
+ *                  "isListingOn": true,
+ *                  "meetingPlace": {
+ *                      "address" : "1109 S. Pleasant Valley Rd.",
+ *                      "city" : "Austin",
+ *                      "state" : "TX",
+ *                      "zip" : 78741,
+ *                      "lat" : 30.2403158,
+ *                      "long" : -97.71805909999999
  *                  }
  *              },
- *              ...
- *          ]
+ *              blockedUsers: [
+ *                  {
+ *                      "_id": "5e2f1c8eec53c15ae2cb96e4"
+ *                      "email": "eisis@stedwards.edu"
+ *                      "name": {
+ *                          "first": "Evangeline",
+ *                          "last": "Mavrommati"
+ *                      }
+ *                  },
+ *                  ...
+ *              ]
+ *          }
  *      }
  *
  * @apiSuccessExample SuccessfulBusinessOwnerResponse:
  *      HTTP/1.1 200 OK
  *      {
  *          "success": true
- *          "email": "alewis3@stedwards.edu",
- *          "name": {
- *              "first": "Amanda",
- *              "last": "Lewis"
- *          },
- *          "accountType": "Business Owner",
- *          "location": {
- *              "address": "6600 Delmonico Dr.",
- *              "city": "Austin",
- *              "state": "TX",
- *              "zip": 78759,
- *              "lat" : 30.4070384,
- *              "long" : -97.77170149999999
- *          },
- *          "allowedItems": "Cardboard, food waste, dried leaves.",
- *          "prohibitedItems": "Meat, egg shells.",
- *          "businessOwnerInfo": {
- *              "isListingOn": false,
- *              "businessName": "Host, Post, and Compost",
- *              "businessWebsite": "https://hpcompost.com"
- *          },
- *          radius: 10,
- *          blockedUsers: [
- *              {
- *                  "_id": "5e2f1c8eec53c15ae2cb96e4"
- *                  "email": "eisis@stedwards.edu"
- *                  "name": {
- *                      "first": "Evangeline",
- *                      "last": "Mavrommati"
- *                  }
+ *          "user": {
+ *              "email": "alewis3@stedwards.edu",
+ *              "name": {
+ *                  "first": "Amanda",
+ *                  "last": "Lewis"
  *              },
- *              ...
- *          ]
+ *              "accountType": "Contributor",
+ *              "location": {
+ *                  "address": "6600 Delmonico Dr.",
+ *                  "city": "Austin",
+ *                  "state": "TX",
+ *                  "zip": 78759,
+ *                  "lat" : 30.4070384,
+ *                  "long" : -97.77170149999999
+ *              },
+ *              radius: 5,
+ *              "allowedItems": "Cardboard, food waste, dried leaves.",
+ *              "prohibitedItems": "Meat, egg shells.",
+ *              "businessOwnerInfo": {
+ *                  "isListingOn": false,
+ *                  "businessName": "Host, Post, and Compost",
+ *                  "businessWebsite": "https://hpcompost.com"
+ *              },
+ *              blockedUsers: [
+ *                  {
+ *                      "_id": "5e2f1c8eec53c15ae2cb96e4"
+ *                      "email": "eisis@stedwards.edu"
+ *                      "name": {
+ *                          "first": "Evangeline",
+ *                          "last": "Mavrommati"
+ *                      }
+ *                  },
+ *                  ...
+ *              ]
+ *          }
  *      }
  *
  * @apiUse IdNotFoundError
