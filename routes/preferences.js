@@ -8,9 +8,9 @@ const is = require("is_js");
  *
  * See https://hpcompost.com/api/docs#api-Preferences_Specific-GetAllowedItems for more information
  */
-router.get('/allowedItems', function (req, res) {
+router.get('/allowedItems', async function (req, res) {
     var id = req.query.id;
-    var user = User.findById(id).exec();
+    var user = await User.findById(id).exec();
     if(!user) {
         return res.status(401).send({ success: false, error: "The id does not exist" });
     }
@@ -19,6 +19,8 @@ router.get('/allowedItems', function (req, res) {
     }
     else {
         let allowed = user.allowedItems;
+        console.log(user);
+        console.log(allowed);
         if (is.undefined(allowed) || is.null(allowed)) {
             return res.status(204).send({success: true, allowedItems: ""});
         }
@@ -33,9 +35,9 @@ router.get('/allowedItems', function (req, res) {
  *
  * See https://hpcompost.com/api/docs#api-Preferences_Specific-GetProhibitedItems
  */
-router.get('/prohibitedItems', function (req, res) {
+router.get('/prohibitedItems', async function (req, res) {
     var id = req.query.id;
-    var user = User.findById(id).exec();
+    var user = await User.findById(id).exec();
     if(!user) {
         return res.status(401).send({ success: false, error: "The id does not exist" });
     }
