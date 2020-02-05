@@ -113,35 +113,39 @@ router.post('/prohibitedItems', async function (req, res) {
 
 router.get('/profile', async function(req, res) {
     let id = req.query.id;
-    let user = User.findById(id).exec(function(err, doc) {
-        if (err) return res.status(500).send({success: false, error: err});
-        else if (!doc) {
-            return res.status(400).send({success: false, error: "IdNotFound"});
+    await User.findById(id).exec(function(err, user) {
+        if (err) {
+            console.log(err);
+            return err;
         }
-        else return doc;
-    });
-    // here i want to format the returned doc so that null values are not included
-    // not entirely necessary but I do not want null values returned.
-    var retDoc = {
-        email: user.email,
-        name: user.name,
-        accountType: user.accountType,
-        location: user.location,
-        radius: user.radius,
-        blockedUsers: user.blockedUsers
-    };
+        else if (!user) {
+            return res.status(400).send({success: false, error: "IdNotFound"})
+        }
+        else {
+            // here i want to format the returned doc so that null values are not included
+            // not entirely necessary but I do not want null values returned.
+            var retDoc = {
+                email: user.email,
+                name: user.name,
+                accountType: user.accountType,
+                location: user.location,
+                radius: user.radius,
+                blockedUsers: user.blockedUsers
+            };
 
-    if (user.accountType === "Homeowner") {
-        retDoc['allowedItems'] = user.allowedItems;
-        retDoc['prohibitedItems'] = user.prohibitedItems;
-        retDoc['homeownerInfo'] = user.homeownerInfo;
-    }
-    else if (user.accountType === "Business Owner") {
-        retDoc['allowedItems'] = user.allowedItems;
-        retDoc['prohibitedItems'] = user.prohibitedItems;
-        retDoc['businessOwnerInfo'] = user.businessOwnerInfo;
-    }
-    return res.status(200).send({success: true, user: retDoc})
+            if (user.accountType === "Homeowner") {
+                retDoc['allowedItems'] = user.allowedItems;
+                retDoc['prohibitedItems'] = user.prohibitedItems;
+                retDoc['homeownerInfo'] = user.homeownerInfo;
+            }
+            else if (user.accountType === "Business Owner") {
+                retDoc['allowedItems'] = user.allowedItems;
+                retDoc['prohibitedItems'] = user.prohibitedItems;
+                retDoc['businessOwnerInfo'] = user.businessOwnerInfo;
+            }
+            return res.status(200).send({success: true, user: retDoc});
+        }
+    });
 });
 
 module.exports = router;
