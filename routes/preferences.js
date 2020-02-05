@@ -3,7 +3,11 @@ var router = express.Router();
 let User = require('../models/User');
 const is = require("is_js");
 
-
+/**
+ * get allowed items
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-GetAllowedItems for more information
+ */
 router.get('/allowedItems', function (req, res) {
     var id = req.query.id;
     var user = User.findById(id).exec();
@@ -24,6 +28,11 @@ router.get('/allowedItems', function (req, res) {
     }
 });
 
+/**
+ * get prohibited items
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-GetProhibitedItems
+ */
 router.get('/prohibitedItems', function (req, res) {
     var id = req.query.id;
     var user = User.findById(id).exec();
@@ -44,7 +53,11 @@ router.get('/prohibitedItems', function (req, res) {
     }
 });
 
-
+/**
+ * post allowed items
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PostAllowedItems for more info
+ */
 router.post('/allowedItems', async function (req, res) {
     var json = req.body;
     var user = await User.findById(json.id).exec();
@@ -68,7 +81,11 @@ router.post('/allowedItems', async function (req, res) {
     }
 });
 
-
+/**
+ * post prohibited items
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PostProhibitedItems for more info
+ */
 router.post('/prohibitedItems', async function (req, res) {
     var json = req.body;
     var user = await User.findById(json.id).exec();
@@ -90,6 +107,39 @@ router.post('/prohibitedItems', async function (req, res) {
             }
         });
     }
+});
+
+router.get('/profile', async function(req, res) {
+    let id = req.query.id;
+    let user = User.findById(id).exec(function(err, doc) {
+        if (err) return res.status(500).send({success: false, error: err});
+        else if (!doc) {
+            return res.status(400).send({success: false, error: "IdNotFound"});
+        }
+        else return doc;
+    });
+    // here i want to format the returned doc so that null values are not included
+    // not entirely necessary but I do not want null values returned.
+    var retDoc = {
+        email: user.email,
+        name: user.name,
+        accountType: user.accountType,
+        location: user.location,
+        radius: user.radius,
+        blockedUsers: user.blockedUsers
+    };
+
+    if (user.accountType === "Homeowner") {
+        retDoc['allowedItems'] = user.allowedItems;
+        retDoc['prohibitedItems'] = user.prohibitedItems;
+        retDoc['homeownerInfo'] = user.homeownerInfo;
+    }
+    else if (user.accountType === "Business Owner") {
+        retDoc['allowedItems'] = user.allowedItems;
+        retDoc['prohibitedItems'] = user.prohibitedItems;
+        retDoc['businessOwnerInfo'] = user.businessOwnerInfo;
+    }
+    return res.status(200).send({success: true, user: retDoc})
 });
 
 module.exports = router;

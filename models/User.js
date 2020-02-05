@@ -97,15 +97,13 @@ const userSchema = new Schema({
             long: Number // so no need to calculate manually
         },
         isListingOn: {
-            type: Boolean,
-            default: true
+            type: Boolean
         }
     },
     businessOwnerInfo: {
         required: false,
         isListingOn: {
-            type: Boolean,
-            default: true
+            type: Boolean
         },
         businessName: String, // this is proper formatted in a pre-save hook
         businessWebsite: { // this url is converted to lowercase in a pre save hook
@@ -119,8 +117,7 @@ const userSchema = new Schema({
             }
         },
         contributorCharge: {
-            type: Number,
-            default: 0
+            type: Number
         }
     }
 }, 
@@ -139,9 +136,7 @@ userSchema.pre('save', function(next) {
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(pw, salt, (err, hash) => {
             if (err) return next(err);
-            console.log(hash);
             user.password = hash;
-            console.log(user.password);
             next();
         })
     });
@@ -192,7 +187,7 @@ userSchema.pre('save', function(next) {
     const city = user.location.city;
     user.location.city = properFormat(city);
 
-    gmClient.geocode({
+    gmQuery = gmClient.geocode({
         address: user.location.address + " " + user.location.city + " " + user.location.state + " " + user.location.zip
     }, function(err, response) {
         if (err) {
@@ -200,18 +195,12 @@ userSchema.pre('save', function(next) {
             return next(err);
         }
         else {
-            console.log(response.json.results[0].geometry);
             user.location.lat = response.json.results[0].geometry.location.lat;
             user.location.long = response.json.results[0].geometry.location.lng;
             console.log("lat: " + user.location.lat + " long: " + user.location.long);
+            next();
         }
     });
-    console.log(user.homeownerInfo.meetingPlace);
-    // default to set homeowner meeting place to the location if the meeting place is null
-    if (user.accountType === "Homeowner" && is.not.existy(user.homeownerInfo.meetingPlace)) {
-        user.homeownerInfo.meetingPlace = user.location;
-    }
-    next();
 });
 
 // a pre save hook for getting the latitude and longitude
@@ -291,6 +280,56 @@ userSchema.pre('save', function (next) {
     }
     let bWebsite = user.businessOwnerInfo.businessWebsite;
     user.businessOwnerInfo.businessWebsite = bWebsite.toLowercase();
+    next();
+});
+
+// pre save for making sure all values are filled out in the db
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("accountType")) {
+        return next();
+    }
+    let accountType = user.accountType;
+    if (accountType === "Homeowner") {
+        if (is.not.existy(user.homeownerInfo.meetingPlace.address)) {
+            user.homeownerInfo.meetingPlace = user.location;
+        }
+        if (is.not.existy(user.homeownerInfo.isListingOn)) {
+            user.homeownerInfo.isListingOn = true;
+        }
+        if (is.not.existy(user.allowedItems)) {
+            user.allowedItems = "";
+        }
+        if (is.not.existy(user.prohibitedItems)) {
+            user.prohibitedItems = "";
+        }
+        user.businessOwnerInfo = null;
+    }
+    else if (accountType === "Business Owner") {
+        if (is.not.existy(user.businessOwnerInfo.businessName)) {
+            user.businessOwnerInfo.businessName = capitalizedFormat("Edit your business name");
+        }
+        if (is.not.existy(user.businessOwnerInfo.businessWebsite)) {
+            user.businessOwnerInfo.businessWebsite = "https://www.google.com";
+        }
+        if (is.not.existy(user.businessOwnerInfo.isListingOn)) {
+            user.businessOwnerInfo.isListingOn = true;
+        }
+        if (is.not.existy(user.businessOwnerInfo.contributorCharge)) {
+            user.businessOwnerInfo.contributorCharge = 0;
+        }
+        if (is.not.existy(user.allowedItems)) {
+            user.allowedItems = "";
+        }
+        if (is.not.existy(user.prohibitedItems)) {
+            user.prohibitedItems = "";
+        }
+        user.homeownerInfo = null;
+    }
+    else if (accountType === "Contributor") {
+        user.homeownerInfo = null;
+        user.businessOwnerInfo = null;
+    }
     next();
 });
 

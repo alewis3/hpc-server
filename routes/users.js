@@ -107,7 +107,6 @@ router.post('/login', async (req, res) => {
   const json = req.body;
   const email = json.email;
   const password = json.password;
-  console.log(email);
   await User.findOne({ email: email }).exec(function (err, user) {
       if (err) return res.status(500).send({loginStatus: false, error: err});
       else {
