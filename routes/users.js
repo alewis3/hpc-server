@@ -140,10 +140,10 @@ router.get('/hostsAll', async function(req, res) {
     }
     else {
 
-        // find all business owners in range
+        // find all business owners
         let businessOwners = User.find({accountType: "Business Owner"}).select("location.lat location.long radius allowedItems prohibitedItems businessOwnerInfo name").exec(function (err, businessOwners) {
             if (err) {
-                return res.status(500).send({success: false, error: err});
+                return err;
             }
             else {
                 // this call is reformatting the business owner objects to have keys to match the documentation
@@ -151,7 +151,7 @@ router.get('/hostsAll', async function(req, res) {
             }
         });
 
-        // find all homeowners in range
+        // find all homeowners
         let homeowners = User.find({accountType: "Homeowner"}).select("homeownerInfo.meetingPlace.lat homeownerInfo.meetingPlace.long radius allowedItems prohibitedItems name homeowerInfo.isListingOn").exec(function (err, homeowners) {
             if (err) {
                 return res.status(500).send({success: false, error: err});
@@ -194,47 +194,37 @@ router.get('/hosts', async function(req, res) {
         var cradius = user.radius;
 
         // find all business owners in range and not blocked by this user or have blocked this user
-        let businessOwners = User.find({_id: {$nin: user.blockedUsers, $nin: user.blockedBy}, accountType: "Business Owner"}).select("location.lat location.long radius allowedItems prohibitedItems businessOwnerInfo name").exec(function (err, businessOwners) {
-            if (err) {
-                return res.status(500).send({success: false, error: err});
-            }
-            else {
-                // filter out business owners not in the range
-                let filtered = businessOwners.filter(function(bo) {
-                    let hradius = bo.radius;
-                    let hlat = bo.location.lat;
-                    let hlong = bo.location.long;
-                    return withinRange(clat, clong, cradius, hlat, hlong, hradius);
-                });
-                // this call is reformatting the business owner objects to have keys to match the documentation
-                return reformatBusinessOwners(filtered);
-            }
-        });
+        let businessOwners = await User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Business Owner"}).exec();
 
         // find all homeowners in range and not blocked by the user
-        let homeowners = User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Homeowner"}).select("homeownerInfo.meetingPlace.lat homeownerInfo.meetingPlace.long radius allowedItems prohibitedItems name homeowerInfo.isListingOn").exec(function (err, homeowners) {
-            if (err) {
-                return res.status(500).send({success: false, error: err});
-            }
-            else {
-                // filter out homeowners not in the range
-                let filtered =  homeowners.filter(function(ho) {
-                    let hradius = ho.radius;
-                    let hlat = ho.homeownerInfo.meetingPlace.lat;
-                    let hlong = ho.homeownerInfo.meetingPlace.long;
-                    return withinRange(clat, clong, cradius, hlat, hlong, hradius);
-                });
-                // this call is reformatting the homeowner objects to have keys to match the documentation
-                return reformatHomeowers(filtered);
-            }
-        });
-
-        // if both lists are empty, return a 204
-        if (businessOwners.length === 0 && homeowners.length === 0) {
+        let homeowners = await User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Homeowner"}).exec();
+        console.log("business owners: " + businessOwners);
+        console.log("homeowners: " + homeowners);
+        if (!businessOwners && !homeowners) {
             return res.status(204).send({success: true, homeowners: [], businessOwners: []});
         }
-        // otherwise return the lists as they are
         else {
+            // filter out business owners not in the range
+            let filteredBOs = businessOwners.filter(function (bo) {
+                let hradius = bo.radius;
+                let hlat = bo.location.lat;
+                let hlong = bo.location.long;
+                return withinRange(clat, clong, cradius, hlat, hlong, hradius);
+            });
+            console.log("filtered business owners: " + filteredBOs);
+            // this call is reformatting the business owner objects to have keys to match the documentation
+            businessOwners = reformatBusinessOwners(filteredBOs);
+
+            // filter out homeowners not in the range
+            let filteredHOs = homeowners.filter(function (ho) {
+                let hradius = ho.radius;
+                let hlat = ho.homeownerInfo.meetingPlace.lat;
+                let hlong = ho.homeownerInfo.meetingPlace.long;
+                return withinRange(clat, clong, cradius, hlat, hlong, hradius);
+            });
+            console.log("filtered homeowners: " + filteredHOs);
+            // this call is reformatting the homeowner objects to have keys to match the documentation
+            homeowners = reformatHomeowers(filteredHOs);
             return res.status(200).send({success: true, homeowners: homeowners, businessOwners: businessOwners});
         }
     }
