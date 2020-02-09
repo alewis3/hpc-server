@@ -129,8 +129,8 @@ router.post('/login', async (req, res) => {
  * To get all hosts for a contributor (For test use only, not for prod)
  * See https://hpcompost.com/api/docs#api-Users-GetHostsAll for more info
  */
-router.get('/hostsAll', async function(req, res) {
-    var userId = req.query.id;
+router.post('/hostsAll', async function(req, res) {
+    var userId = req.body.id;
     var user = await User.findById(userId).exec();
     if(!user) {
         return res.status(404).send({ success: false, error: "IdNotFound"});
@@ -165,8 +165,8 @@ router.get('/hostsAll', async function(req, res) {
  * To get all valid hosts for a contributor
  * See https://hpcompost.com/api/docs#api-Users-GetHosts for more info
  */
-router.get('/hosts', async function(req, res) {
-    var userId = req.query.id;
+router.post('/hosts', async function(req, res) {
+    var userId = req.body.id;
     var user = await User.findById(userId).exec();
     if(!user) {
         return res.status(404).send({ success: false, error: "IdNotFound"});
