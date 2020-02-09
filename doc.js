@@ -32,13 +32,57 @@
  */
 
 /**
+ * @apiDefine MissingIdError
+ *
+ * @apiErrorExample MissingId:
+ *      HTTP/1.1 400 BAD REQUEST
+ *      {
+ *          "success": false,
+ *          "error": "MissingId" // id was not in the body of the request
+ *      }
+ */
+
+/**
+ * @apiDefine MissingRequiredFieldsError
+ *
+ * @apiErrorExample MissingRequiredFields:
+ *      HTTP/1.1 400 BAD REQUEST
+ *      {
+ *          "success": false,
+ *          "error": "MissingRequiredFields"
+ *      }
+ */
+
+/**
+ * @apiDefine NoMatchError
+ *
+ * @apiErrorExample NoMatch:
+ *     HTTP/1.1 401 UNAUTHORIZED
+ *     {
+ *       "success": false,
+ *       "error": "NoMatch"
+ *     }
+ */
+
+/**
+ * @apiDefine UserUpdateError
+ *
+ * @apiErrorExample UserUpdateError:
+ *      HTTP/1.1 400 BAD REQUEST
+ *      {
+ *          "success": false,
+ *          "error": "UserUpdateError: _____"
+ *      }
+ */
+
+/**
  * @apiDefine IdNotFoundError
  *
  * @apiErrorExample IdNotFound
  *      HTTP/1.1 404 NOT FOUND
  *      {
  *          "success": false,
- *          "error": "IdNotFound"
+ *          "error": "IdNotFound" // id was not found in the db
  *      }
  */
 
@@ -77,6 +121,7 @@
  *          "allowedItems": "Dried leaves, cardboard, cereal boxes, fruit and vegetable waste."
  *      }
  *
+ * @apiUse MissingIdError
  * @apiUse AccountTypeMismatchError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
@@ -106,6 +151,7 @@
  *          "prohibitedItems": "Meat/egg scraps, dairy, fat, lard, oils."
  *      }
  *
+ * @apiUse MissingIdError
  * @apiUse AccountTypeMismatchError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
@@ -130,8 +176,10 @@
  *
  * @apiUse SuccessfulUpdate
  *
- * @apiUse AccountTypeMismatchError
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
+ * @apiUse AccountTypeMismatchError
+ * @apiUse MissingRequiredFieldsError
  * @apiUse ServerError
  */
 
@@ -154,8 +202,10 @@
  *
  * @apiUse SuccessfulUpdate
  *
+ * @apiUse MissingIdError
  * @apiUse AccountTypeMismatchError
  * @apiUse IdNotFoundError
+ * @apiUse MissingRequiredFieldsError
  * @apiUse ServerError
  */
 
@@ -167,7 +217,8 @@
  *
  * @apiParam {String} id The id of the user and the only required field of this request.
  * @apiParam {String} [email] A unique email (This acts as their username)
- * @apiParam {String} [password] A strong password in plaintext. This is hashed on the API side.
+ * @apiParam {String} [passwordOld] The old password to match by.
+ * @apiParam {String} [passwordNew] The new password to change password to.
  * @apiParam {Object} [name] An object containing "first" and "last" fields
  * @apiParam {String} [name.first] The user's first name
  * @apiParam {String} [name.last] The user's last name
@@ -204,8 +255,11 @@
  * @apiError (500) {Object} error An error object with more information on the failure.
  *
  * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse AccountTypeMismatchError
+ * @apiUse UserUpdateError
  * @apiUse ServerError
  */
 
@@ -407,6 +461,8 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
@@ -428,6 +484,8 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
@@ -450,6 +508,8 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
@@ -478,6 +538,39 @@
  *          "isListingOn": true/false
  *      }
  *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
+ * @api {patch} /preferences/newHomeowner * Update a user's account type to "Homeowner"
+ * @apiName PatchHomeownerInfo
+ * @apiGroup Preferences.Specific
+ * @apiDescription NI - This route will allow you to update a user's accountType to "Homeowner", and set all the homeowner information.
+ *
+ * @apiParam {String} id The id of the user to edit (*Must be a Homeowner!*)
+ * @apiParam {String} allowedItems The items they allow.
+ * @apiParam {String} prohibitedItems The items they prohibit.
+ * @apiParam {Object} meetingPlace An object containing address information on where they want to meet.
+ * @apiParam {String} meetingPlace.address The address of the meeting place.
+ * @apiParam {String} meetingPlace.city The city of the meeting place.
+ * @apiParam {String{2}} meetingPlace.state The state of the meeting place (in two-letter abbreviation format i.e. 'TX' or 'CA')
+ * @apiParam {Number} meetingPlace.zip The zip of the meeting place.
+ * @apiParam {Boolean} isListingOn Whether or not their listing should be active.
+ * @apiParam {Number} radius The distance (in miles) of how far they want their post to display.
+ *
+ * @apiSuccess {Boolean} success Will be true if the new homeowner's info could be successfully updated.
+ *
+ * @apiError {Boolean} success Will be false if some error occurred.
+ * @apiError {String} error A description of what error occurred.
+ *
+ * @apiError (500) {Boolean} success Will be false if some server error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
@@ -509,6 +602,7 @@
  *
  * @apiUse SuccessfulUpdate
  *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
@@ -543,6 +637,7 @@
  *
  * @apiUse SuccessfulUpdate
  *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
@@ -603,6 +698,7 @@
  *         "error": "FormattingError: ______"
  *     }
  *
+ * @apiUse MissingIdError
  * @apiUse ServerError
  */
 
@@ -634,13 +730,6 @@
  *          "userId": "5dac1173f950cb1188348941"
  *      }
  *
- * @apiErrorExample UserNotFound:
- *     HTTP/1.1 404 NOT FOUND
- *     {
- *       "success": false,
- *       "error": "UserNotFound"
- *     }
- *
  * @apiErrorExample WrongCredentials:
  *     HTTP/1.1 401 UNAUTHORIZED
  *     {
@@ -648,6 +737,8 @@
  *       "error": "WrongCredentials"
  *     }
  *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
 
@@ -657,7 +748,7 @@
  * @apiGroup Users
  * @apiDescription C - This endpoint limits the search of hosts by the radius of that user and the radius of each individual host. Will return a list of homeowners and business owners in range and not blocked.
  *
- * @apiParam {String} userId Sent in the request url, the user id of the user you want to match by.
+ * @apiParam {String} id Sent in the request url, the user id of the user you want to match by.
  *
  * @apiSuccess {Boolean} success Will be true if hosts could be found
  * @apiSuccess {Object[]} businessOwners The list of business owners to display on the map
@@ -744,6 +835,7 @@
  *          "homeowners": []
  *      }
  *
+ * @apiUse MissingIdError
  * @apiUse AccountTypeMismatchError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
@@ -756,7 +848,7 @@
  * @apiGroup Users
  * @apiDescription C - This endpoint returns all hosts registered.
  *
- * @apiParam {String} userId Sent in the request url, the user id of the user you want to match by.
+ * @apiParam {String} id Sent in the request url, the user id of the user you want to match by.
  *
  * @apiSuccess {Boolean} success Will be true if hosts could be found
  * @apiSuccess {Object[]} businessOwners The list of business owners to display on the map
@@ -843,6 +935,7 @@
  *          "homeowners": []
  *      }
  *
+ * @apiUse MissingIdError
  * @apiUse AccountTypeMismatchError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
@@ -869,15 +962,10 @@
  *
  * @apiUse SuccessfulUpdate
  *
+ * @apiUse MissingIdError
+ * @apiUse NoMatchError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
- *
- * @apiErrorExample NoMatch:
- *     HTTP/1.1 401 UNAUTHORIZED
- *     {
- *       "success": false,
- *       "error": "NoMatch"
- *     }
  */
 
 /**
@@ -898,6 +986,8 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  * @apiErrorExample UserAlreadyBlocked:
@@ -926,6 +1016,8 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  * @apiErrorExample UserNotBlocked:
