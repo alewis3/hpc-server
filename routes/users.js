@@ -129,14 +129,14 @@ router.post('/login', async (req, res) => {
  * To get all hosts for a contributor (For test use only, not for prod)
  * See https://hpcompost.com/api/docs#api-Users-GetHostsAll for more info
  */
-router.post('/hostsAll', async function(req, res) {
-    var userId = req.body.id;
+router.get('/hostsAll', async function(req, res) {
+    var userId = req.query.id;
     var user = await User.findById(userId).exec();
     if(!user) {
-        return res.status(404).send({ success: false, error: "IdNotFound"});
+        return res.type('json').status(404).send({ success: false, error: "IdNotFound"});
     }
     if (user.accountType !== "Contributor") {
-        return res.status(400).send({ success: false, error: "AccountTypeMismatch"});
+        return res.type('json').status(400).send({ success: false, error: "AccountTypeMismatch"});
     }
     else {
 
@@ -150,11 +150,11 @@ router.post('/hostsAll', async function(req, res) {
         homeowners = reformatHomeowers(homeowners);
         // if both lists are empty, return a 204
         if (!businessOwners && !homeowners) {
-            return res.status(204).send({success: true, homeowners: [], businessOwners: []});
+            return res.type('json').status(204).send({success: true, homeowners: [], businessOwners: []});
         }
         // otherwise return the lists as they are
         else {
-            return res.status(200).send({success: true, homeowners: homeowners, businessOwners: businessOwners});
+            return res.type('json').status(200).send({success: true, homeowners: homeowners, businessOwners: businessOwners});
         }
     }
 });
@@ -165,14 +165,14 @@ router.post('/hostsAll', async function(req, res) {
  * To get all valid hosts for a contributor
  * See https://hpcompost.com/api/docs#api-Users-GetHosts for more info
  */
-router.post('/hosts', async function(req, res) {
-    var userId = req.body.id;
+router.get('/hosts', async function(req, res) {
+    var userId = req.query.id;
     var user = await User.findById(userId).exec();
     if(!user) {
-        return res.status(404).send({ success: false, error: "IdNotFound"});
+        return res.type('json').status(404).send({ success: false, error: "IdNotFound"});
     }
     if (user.accountType !== "Contributor") {
-        return res.status(400).send({ success: false, error: "AccountTypeMismatch"});
+        return res.type('json').status(400).send({ success: false, error: "AccountTypeMismatch"});
     }
     else {
         var clat = user.location.lat;
@@ -187,7 +187,7 @@ router.post('/hosts', async function(req, res) {
         console.log("business owners: " + businessOwners);
         console.log("homeowners: " + homeowners);
         if (!businessOwners && !homeowners) {
-            return res.status(204).send({success: true, homeowners: [], businessOwners: []});
+            return res.type('json').status(204).send({success: true, homeowners: [], businessOwners: []});
         }
         else {
             // filter out business owners not in the range
@@ -211,7 +211,7 @@ router.post('/hosts', async function(req, res) {
             console.log("filtered homeowners: " + filteredHOs);
             // this call is reformatting the homeowner objects to have keys to match the documentation
             homeowners = reformatHomeowers(filteredHOs);
-            return res.status(200).send({success: true, homeowners: homeowners, businessOwners: businessOwners});
+            return res.type('json').status(200).send({success: true, homeowners: homeowners, businessOwners: businessOwners});
         }
     }
 });
