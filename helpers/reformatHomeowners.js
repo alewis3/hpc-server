@@ -29,15 +29,12 @@
  */
 
 module.exports = function(homeownersArray) {
-    var newHomeownersArray = []
+    var newHomeownersArray = [];
     for (var i = 0; i < homeownersArray.length; i++) {
         let orig = homeownersArray[i];
         var newHO = {
             _id: orig._id,
-            location: {
-                lat: orig.homeownerInfo.meetingPlace.lat,
-                long: orig.homeownerInfo.meetingPlace.long
-            },
+            location: orig.homeownerInfo.meetingPlace,
             allowedItems: orig.allowedItems,
             prohibitedItems: orig.prohibitedItems,
             name: orig.name,
