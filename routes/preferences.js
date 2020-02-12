@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 let User = require('../models/User');
 const is = require("is_js");
-
+const bcrypt = require('bcryptjs');
 /**
  * get allowed items
  *
@@ -10,12 +10,17 @@ const is = require("is_js");
  */
 router.get('/allowedItems', async function (req, res) {
     var id = req.query.id;
+
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+
     var user = await User.findById(id).exec();
     if(!user) {
-        return res.status(401).send({ success: false, error: "The id does not exist" });
+        return res.status(400).send({ success: false, error: "IdNotFound" });
     }
     else if (user.accountType === "Contributor") {
-        return res.status(401).send({success: false, error: "Contributors do not have allowed items."});
+        return res.status(400).send({success: false, error: "AccountTypeMismatch"});
     }
     else {
         let allowed = user.allowedItems;
@@ -37,12 +42,17 @@ router.get('/allowedItems', async function (req, res) {
  */
 router.get('/prohibitedItems', async function (req, res) {
     var id = req.query.id;
+
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+
     var user = await User.findById(id).exec();
     if(!user) {
-        return res.status(401).send({ success: false, error: "The id does not exist" });
+        return res.status(400).send({ success: false, error: "IdNotFound" });
     }
     else if (user.accountType === "Contributor") {
-        return res.status(401).send({success: false, error: "Contributors do not have prohibited items."});
+        return res.status(400).send({success: false, error: "AccountTypeMismatch"});
     }
     else {
         let prohibit = user.prohibitedItems;
@@ -62,19 +72,25 @@ router.get('/prohibitedItems', async function (req, res) {
  */
 router.post('/allowedItems', async function (req, res) {
     var json = req.body;
-    var user = await User.findById(json.id).exec();
+    var id = json.id;
+
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+
+    var user = await User.findById(id).exec();
     if(!user) {
-        return res.status(401).send({ success: false, error: "The id does not exist" });
+        return res.status(400).send({ success: false, error: "IdNotFound" });
     }
     else if (user.accountType === "Contributor") {
-        return res.status(401).send({success: false, error: "Account type must be homeowner or business owner."});
+        return res.status(400).send({success: false, error: "AccountTypeMismatch"});
     }
     else {
         user.allowedItems = json.allowedItems;
         user.save(function(err) {
             if (err) {
                 console.log(err);
-                return res.status(500).send({success: false, error: "User could not be saved"});
+                return res.status(500).send({success: false, error: err});
             }
             else {
                 return res.status(200).send({success: true});
@@ -90,12 +106,18 @@ router.post('/allowedItems', async function (req, res) {
  */
 router.post('/prohibitedItems', async function (req, res) {
     var json = req.body;
-    var user = await User.findById(json.id).exec();
+    var id = json.id;
+
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+
+    var user = await User.findById(id).exec();
     if(!user) {
-        return res.status(401).send({ success: false, error: "The id does not exist" });
+        return res.status(400).send({ success: false, error: "IdNotFound" });
     }
     else if (user.accountType === "Contributor") {
-        return res.status(401).send({success: false, error: "Account type must be homeowner or business owner."});
+        return res.status(400).send({success: false, error: "AccountTypeMismatch"});
     }
     else {
         user.prohibitedItems = json.prohibitedItems;
@@ -111,6 +133,164 @@ router.post('/prohibitedItems', async function (req, res) {
     }
 });
 
+router.patch('/profile', async function (req, res) {
+   let body = req.body;
+   let id = body.id;
+   if (is.undefined(id)) {
+       return res.status(400).send({success: false, error: "MissingId"})
+   }
+   // grab the user
+   let user = await User.findOne({_id: id}).exec();
+   // if the user is null, return a 404
+   if (!user) {
+       return res.status(404).send({ success: false, error: "IdNotFound" });
+   }
+   // if the email exists, update user and then save to make sure the email was unique.
+   if (is.existy(body.email) && is.string(body.email)) {
+       console.log("Checking unique email");
+       let emailCheck = await User.findOne({email: body.email}).exec();
+       if (!emailCheck) {
+           console.log("Email unique");
+           user.email = body.email;
+       }
+       else {
+           console.log("Email not unique");
+           return res.status(400).send({success: false, error: "UserUpdateError: Non-Unique Email"});
+       }
+   }
+   else if (is.existy(body.email) && is.not.string(body.email)) {
+       return res.status(400).send({success: false, error: "UserUpdateError: Email not a string"});
+   }
+
+   // if the password old AND new exists, update the password using helper method
+   if (is.existy(body.passwordOld) && is.string(body.passwordOld) && is.existy(body.passwordNew) && is.string(body.passwordNew)) {
+       console.log("Updating password");
+
+       // check passwords to make sure they match
+       const passwordMatch = bcrypt.compareSync(body.passwordOld, user.password);
+       // reset password sets the user's password field to the new password, if they match
+       if (!passwordMatch) {
+           return res.status(400).send({success: false, error: "UserUpdateError: Passwords do not match!"})
+       }
+       else {
+           console.log("password matched!");
+           user.password = body.passwordNew;
+       }
+   }
+   else if ((is.existy(body.passwordOld) && is.not.string(body.passwordOld)) || (is.existy(body.passwordNew) && is.not.string(body.passwordNew))) {
+       return res.status(400).send({success: false, error: "UserUpdateError: Password (old AND new) must be a string"});
+   }
+
+    // if the name exists, then check each value in it
+    if(is.existy(body.name) && is.not.empty(body.name) && is.object(body.name)) {
+        console.log("Updating name");
+        user.name = body.name;
+    }
+    else if (is.existy(body.name) && is.not.object(body.name)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Name not an object"});
+    }
+
+    // if the account type is changing, update the account type
+    if (is.existy(body.accountType) && is.string(body.accountType)) {
+        console.log("Updating acct type");
+        user.accountType = body.accountType;
+    }
+    else if (is.existy(body.accountType) && is.not.string(body.accountType)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Account Type not a string"});
+    }
+
+    // if the location is there, reset their location
+    if (is.existy(body.location) && is.object(body.location)) {
+        console.log("updating location");
+        if (is.string(body.location.address) && is.string(body.location.city) && is.string(body.location.state) && is.number(body.location.zip)) {
+            user.location = body.location;
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Location components improperly formatted"});
+        }
+    }
+    else if (is.existy(body.location) && is.not.object(body.location)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Location not an object"});
+    }
+
+    // if the allowedItems is not empty, set it if they are not a contributor (Hosts only)
+    if (is.existy(body.allowedItems) && is.string(body.allowedItems) && user.accountType !== "Contributor") {
+        console.log("updating allowed items");
+        user.allowedItems = body.allowedItems;
+    }
+    else if (is.existy(body.allowedItems) && is.not.string(body.allowedItems)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Allowed items not a string"});
+    }
+    // if this field does exist, and they are a contributor, throw an AccountTypeMismatchError
+    else if (is.existy(body.allowedItems)) {
+        console.log("Contributor tried to update allowed items");
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+    }
+
+    // if the prohibited items is not empty, set it if they are not a contributor (Hosts only)
+    if (is.existy(body.prohibitedItems) && is.string(body.prohibitedItems) && user.accountType !== "Contributor") {
+        console.log("Updating prohibited items");
+        user.prohibitedItems = body.prohibitedItems;
+    }
+    else if (is.existy(body.prohibitedItems) && is.not.string(body.prohibitedItems)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Prohibited items not a string"});
+    }
+    // if this field does exist, and they are a contributor, throw an AccountTypeMismatchError
+    else if (is.existy(body.prohibitedItems)) {
+        console.log("Contributor tried to update prohibited items");
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+    }
+
+    // if the radius is not empty, set it
+    if (is.existy(body.radius) && is.number(body.radius)) {
+        console.log("updating radius");
+        user.radius = body.radius;
+    }
+    else if (is.existy(body.radius) && is.not.number(body.radius)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Radius not a number"});
+    }
+
+    // if the homeowner info is not empty, set it
+    if (is.existy(body.homeownerInfo) && is.not.empty(body.homeownerInfo) && is.object(body.homeownerInfo) && user.accountType === "Homeowner") {
+        console.log("Updating homeowner info");
+        user.homeownerInfo = body.homeownerInfo;
+    }
+    else if (is.existy(body.homeownerInfo) && is.not.object(body.homeownerInfo)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Homeowner info not an object"});
+    }
+    else if (is.existy(body.homeownerInfo) && user.accountType !== "Homeowner") {
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+    }
+
+    // if the business owner info is not empty, set it
+    if (is.existy(body.businessOwnerInfo) && is.not.empty(body.businessOwnerInfo) && is.object(body.businessOwnerInfo) && user.accountType === "Business Owner") {
+        console.log("Updating businessOwnerInfo");
+        user.businessOwnerInfo = body.businessOwnerInfo;
+    }
+    else if (is.existy(body.businessOwnerInfo) && is.not.object(body.businessOwnerInfo)) {
+        return res.status(400).send({success: false, error: "UserUpdateError: Business owner info not an object"});
+    }
+    else if (is.existy(body.businessOwnerInfo) && user.accountType !== "Business Owner") {
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+    }
+    console.log(user);
+
+    console.log("Saving user");
+    await user.save();
+    User.findById(id)
+        .then(function(result) {
+        res.status(200).send({success: true});
+    })
+        .catch(function(err) {
+            res.status(500).send({success: false, error: err});
+        })
+});
+
+/**
+ * Get Profile
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_General-GetProfile for more info
+ */
 router.get('/profile', async function(req, res) {
     let id = req.query.id;
     await User.findById(id).exec(function(err, user) {
