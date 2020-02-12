@@ -240,7 +240,7 @@ router.patch('/updateListing', async function(req, res) {
  *
  * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchGetListing for more info
  */
-router.get('isListingOn', async function(req, res) {
+router.get('/isListingOn', async function(req, res) {
     let id = req.query.id;
     if (is.undefined(id)) {
         return res.status(400).send({success: false, error: "MissingId"})
