@@ -550,21 +550,21 @@
  */
 
 /**
- * @api {patch} /preferences/homeownerInfo * Update a user's account type to "Homeowner"
- * @apiName PatchHomeownerInfo
+ * @api {patch} /preferences/newHomeowner * Update a user's account type to "Homeowner"
+ * @apiName PatchHomeownerAcctType
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will allow you to update a user's homeowner information, if they are a homeowner.
+ * @apiDescription NI - This route will allow you to update a user's accountType to "Homeowner", and set all the homeowner information.
  *
  * @apiParam {String} id The id of the user to edit (*Must be a Homeowner!*)
- * @apiParam {String} [allowedItems] The items they allow.
- * @apiParam {String} [prohibitedItems] The items they prohibit.
- * @apiParam {Object} [meetingPlace] An object containing address information on where they want to meet.
- * @apiParam {String} [meetingPlace.address] The address of the meeting place.
- * @apiParam {String} [meetingPlace.city] The city of the meeting place.
- * @apiParam {String{2}} [meetingPlace.state] The state of the meeting place (in two-letter abbreviation format i.e. 'TX' or 'CA')
- * @apiParam {Number} [meetingPlace.zip] The zip of the meeting place.
- * @apiParam {Boolean} [isListingOn] Whether or not their listing should be active.
- * @apiParam {Number} [radius] The distance (in miles) of how far they want their post to display.
+ * @apiParam {String} allowedItems The items they allow.
+ * @apiParam {String} prohibitedItems The items they prohibit.
+ * @apiParam {Object} meetingPlace An object containing address information on where they want to meet.
+ * @apiParam {String} meetingPlace.address The address of the meeting place.
+ * @apiParam {String} meetingPlace.city The city of the meeting place.
+ * @apiParam {String{2}} meetingPlace.state The state of the meeting place (in two-letter abbreviation format i.e. 'TX' or 'CA')
+ * @apiParam {Number} meetingPlace.zip The zip of the meeting place.
+ * @apiParam {Boolean} isListingOn Whether or not their listing should be active.
+ * @apiParam {Number} radius The distance (in miles) of how far they want their post to display.
  *
  * @apiSuccess {Boolean} success Will be true if the new homeowner's info could be successfully updated.
  *
@@ -582,10 +582,10 @@
  */
 
 /**
- * @api {patch} /preferences/homeownerInfo * Update a homeowner's info
+ * @api {patch} /preferences/homeownerInfo Update a homeowner's info
  * @apiName PatchHomeownerInfo
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will allow you to update or set a homeowner's info, including allowed/prohibitedItems, meetingPlace, display radius, and isListingOn. These fields are optional, but send in at least one so the request has something to do.
+ * @apiDescription C - This route will allow you to update or set a homeowner's info, including allowed/prohibitedItems, meetingPlace, display radius, and isListingOn. These fields are optional, but send in at least one so the request has something to do.
  *
  * @apiParam {String} id The id of the user to edit (*Must be a Homeowner!*)
  * @apiParam {String} [allowedItems] The items they allow.
@@ -614,10 +614,10 @@
  */
 
 /**
- * @api {patch} /preferences/businessOwnerInfo * Update a business owner's info
+ * @api {patch} /preferences/businessOwnerInfo Update a business owner's info
  * @apiName PatchBusinessOwnerInfo
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will allow you to update or set a business owner's info, including allowed/prohibitedItems, business name, business website, contributor charge (if any), display radius, and isListingOn, but also the location (which every user has). For the business owner, the location should be the same as the business address. These fields are optional, but send in at least one so the request has something to do.
+ * @apiDescription C - This route will allow you to update or set a business owner's info, including allowed/prohibitedItems, business name, business website, contributor charge (if any), display radius, and isListingOn, but also the location (which every user has). For the business owner, the location should be the same as the business address. These fields are optional, but send in at least one so the request has something to do.
  *
  * @apiParam {String} id The id of the user to edit (*Must be a Business Owner!*)
  * @apiParam {String} [allowedItems] The items they allow.
