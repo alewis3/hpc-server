@@ -524,17 +524,17 @@ router.patch('/homeownerInfo', async function(req, res) {
         }
 
         // if the location is not empty, set it
-        if (is.existy(body.location) && is.object(body.location)) {
+        if (is.existy(body.meetingPlace) && is.object(body.meetingPlace)) {
             console.log("updating location");
-            if (is.string(body.location.address) && is.string(body.location.city) && is.string(body.location.state) && is.number(body.location.zip)) {
-                user.location = body.location;
+            if (is.string(body.meetingPlace.address) && is.string(body.meetingPlace.city) && is.string(body.meetingPlace.state) && is.number(body.meetingPlace.zip)) {
+                user.location = body.meetingPlace;
             }
             else {
-                return res.status(400).send({success: false, error: "UserUpdateError: Location components improperly formatted"});
+                return res.status(400).send({success: false, error: "UserUpdateError: Meeting place components improperly formatted"});
             }
         }
-        else if (is.existy(body.location)) {
-            return res.status(400).send({success: false, error: "UserUpdateError: Location not an object"});
+        else if (is.existy(body.meetingPlace)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Meeting place not an object"});
         }
 
         // if the isListingOn field exists, change it
@@ -544,6 +544,147 @@ router.patch('/homeownerInfo', async function(req, res) {
         }
         else if (is.existy(body.isListingOn)) {
             return res.status(400).send({success: false, error: "UserUpdateError: isListingOn not a boolean"});
+        }
+
+        await user.save();
+
+        await User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
+    }
+});
+
+/**
+ * Patch new homeowner
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchContributorAcctType for more info
+ */
+router.patch('/newContributor', async function(req, res) {
+    let body = req.body;
+    let id = body.id;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = await User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else if (user.accountType === "Contributor") {
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+    }
+    else {
+
+        // if the radius is not empty, set it
+        if (is.existy(body.radius) && is.number(body.radius)) {
+            console.log("updating radius");
+            user.radius = body.radius;
+        }
+        else if (is.existy(body.radius)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Radius not a number"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: radius does not exist."});
+        }
+
+        await user.save();
+
+        await User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
+    }
+});
+
+/**
+ * Patch new homeowner
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchHomeownerAcctType for more info
+ */
+router.patch('/newHomeowner', async function(req, res) {
+    let body = req.body;
+    let id = body.id;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = await User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else if (user.accountType === "Homeowner") {
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Homeowner"});
+    }
+    else {
+        // if the allowedItems is not empty, set it if they are not a contributor (Hosts only)
+        if (is.existy(body.allowedItems) && is.string(body.allowedItems)) {
+            console.log("updating allowed items");
+            user.allowedItems = body.allowedItems;
+        }
+        else if (is.existy(body.allowedItems)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Allowed items not a string"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Allowed items does not exist."});
+        }
+
+
+        // if the prohibited items is not empty, set it if they are not a contributor (Hosts only)
+        if (is.existy(body.prohibitedItems) && is.string(body.prohibitedItems)) {
+            console.log("Updating prohibited items");
+            user.prohibitedItems = body.prohibitedItems;
+        }
+        else if (is.existy(body.prohibitedItems)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Prohibited items not a string"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Prohibited items does not exist."});
+        }
+
+        // if the radius is not empty, set it
+        if (is.existy(body.radius) && is.number(body.radius)) {
+            console.log("updating radius");
+            user.radius = body.radius;
+        }
+        else if (is.existy(body.radius)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Radius not a number"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: radius does not exist."});
+        }
+
+        // if the location is not empty, set it
+        if (is.existy(body.meetingPlace) && is.object(body.meetingPlace)) {
+            console.log("updating location");
+            if (is.string(body.meetingPlace.address) && is.string(body.meetingPlace.city) && is.string(body.meetingPlace.state) && is.number(body.meetingPlace.zip)) {
+                user.location = body.meetingPlace;
+            }
+            else {
+                return res.status(400).send({success: false, error: "UserUpdateError: Meeting place components improperly formatted"});
+            }
+        }
+        else if (is.existy(body.meetingPlace)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Meeting place not an object"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Meeting place does not exist."});
+        }
+
+        // if the isListingOn field exists, change it
+        if (is.existy(body.isListingOn) && is.boolean(body.isListingOn)) {
+            console.log("Updating isListingOn");
+            user.businessOwnerInfo.isListingOn = body.isListingOn;
+        }
+        else if (is.existy(body.isListingOn)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: isListingOn not a boolean"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: isListingOn does not exist."});
         }
 
         await user.save();
@@ -665,6 +806,140 @@ router.patch('/businessOwnerInfo', async function(req, res) {
                 res.status(500).send({success: false, error: err});
             });
 
+    }
+});
+
+/**
+ * Patch new business owner
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchBusinessOwnerAcctType for more info
+ */
+router.patch('/newBusinessOwner', async function(req, res) {
+    let body = req.body;
+    let id = body.id;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = await User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else if (user.accountType === "Business Owner") {
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Business Owner"});
+    }
+    else {
+        user.accountType = "Business Owner";
+        // if the allowedItems is not empty, set it if they are not a contributor (Hosts only)
+        if (is.existy(body.allowedItems) && is.string(body.allowedItems)) {
+            console.log("updating allowed items");
+            user.allowedItems = body.allowedItems;
+        }
+        else if (is.existy(body.allowedItems)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Allowed items not a string"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Allowed items does not exist."});
+        }
+
+
+        // if the prohibited items is not empty, set it if they are not a contributor (Hosts only)
+        if (is.existy(body.prohibitedItems) && is.string(body.prohibitedItems)) {
+            console.log("Updating prohibited items");
+            user.prohibitedItems = body.prohibitedItems;
+        }
+        else if (is.existy(body.prohibitedItems)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Prohibited items not a string"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Prohibited items does not exist."});
+        }
+
+        // if the radius is not empty, set it
+        if (is.existy(body.radius) && is.number(body.radius)) {
+            console.log("updating radius");
+            user.radius = body.radius;
+        }
+        else if (is.existy(body.radius)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Radius not a number"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Radius does not exist."});
+        }
+
+        // if the business name is not empty, set it
+        if (is.existy(body.businessName) && is.string(body.businessName)) {
+            console.log("updating business name");
+            user.businessOwnerInfo.businessName = body.businessName;
+        }
+        else if (is.existy(body.businessName)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: businessName not a string"})
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Business name does not exist."});
+        }
+
+        // if the business website is not empty, set it
+        if (is.existy(body.businessWebsite) && is.string(body.businessWebsite)) {
+            console.log("updating business website");
+            user.businessOwnerInfo.businessWebsite = body.businessWebsite;
+        }
+        else if (is.existy(body.businessWebsite)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: businessWebsite not a string"})
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Business website does not exist."});
+        }
+
+        // if the business website is not empty, set it
+        if (is.existy(body.contributorCharge) && is.string(body.contributorCharge)) {
+            console.log("updating contributor charge");
+            user.businessOwnerInfo.contributorCharge = body.contributorCharge;
+        }
+        else if (is.existy(body.contributorCharge)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: contributorCharge not a number"})
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Contributor charge does not exist."});
+        }
+
+        // if the location is not empty, set it
+        if (is.existy(body.location) && is.object(body.location)) {
+            console.log("updating location");
+            if (is.string(body.location.address) && is.string(body.location.city) && is.string(body.location.state) && is.number(body.location.zip)) {
+                user.location = body.location;
+            }
+            else {
+                return res.status(400).send({success: false, error: "UserUpdateError: Location components improperly formatted"});
+            }
+        }
+        else if (is.existy(body.location)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Location not an object"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: Location does not exist."});
+        }
+
+        // if the isListingOn field exists, change it
+        if (is.existy(body.isListingOn) && is.boolean(body.isListingOn)) {
+            console.log("Updating isListingOn");
+            user.businessOwnerInfo.isListingOn = body.isListingOn;
+        }
+        else if (is.existy(body.isListingOn)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: isListingOn not a boolean"});
+        }
+        else {
+            return res.status(400).send({success: false, error: "UserUpdateError: isListingOn does not exist."});
+        }
+
+        await user.save();
+
+        await User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
     }
 });
 

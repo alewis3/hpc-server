@@ -550,12 +550,12 @@
  */
 
 /**
- * @api {patch} /preferences/newHomeowner * Update a user's account type to "Homeowner"
+ * @api {patch} /preferences/newHomeowner Update a user's account type to "Homeowner"
  * @apiName PatchHomeownerAcctType
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will allow you to update a user's accountType to "Homeowner", and set all the homeowner information.
+ * @apiDescription C - This route will allow you to update a user's accountType to "Homeowner", and set all the homeowner information.
  *
- * @apiParam {String} id The id of the user to edit (*Must be a Homeowner!*)
+ * @apiParam {String} id The id of the user to edit (*Must not be a Homeowner!*)
  * @apiParam {String} allowedItems The items they allow.
  * @apiParam {String} prohibitedItems The items they prohibit.
  * @apiParam {Object} meetingPlace An object containing address information on where they want to meet.
@@ -575,19 +575,19 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
- *
+ * @apiUse UserUpdateError
  * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  */
 
 /**
- * @api {patch} /preferences/newBusinessOwner * Update a user's account type to "Business Owner"
+ * @api {patch} /preferences/newBusinessOwner Update a user's account type to "Business Owner"
  * @apiName PatchBusinessOwnerAcctType
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will allow you to update a user's accountType to "Business Owner", and set all the business owner information.
+ * @apiDescription C - This route will allow you to update a user's accountType to "Business Owner", and set all the business owner information.
  *
- * @apiParam {String} id The id of the user to edit (*Must be a Business owner!*)
+ * @apiParam {String} id The id of the user to edit (*Must not be a Business owner!*)
  * @apiParam {String} allowedItems The items they allow.
  * @apiParam {String} prohibitedItems The items they prohibit.
  * @apiParam {String} businessName The name of the business
@@ -610,7 +610,32 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
+ * @apiUse UserUpdateError
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
+ * @api {patch} /preferences/newContributor Update a user's account type to "Contributor"
+ * @apiName PatchContributorAcctType
+ * @apiGroup Preferences.Specific
+ * @apiDescription C - This route will allow you to update a user's accountType to "Contributor". This will erase any information about the home or business owner
  *
+ * @apiParam {String} id The id of the user to edit (*Must not be a contributor!*)
+ * @apiParam {Number} radius The distance (in miles) of how far they want to search for hosts.
+ *
+ * @apiSuccess {Boolean} success Will be true if the new contributor's info could be successfully updated.
+ *
+ * @apiError {Boolean} success Will be false if some error occurred.
+ * @apiError {String} error A description of what error occurred.
+ *
+ * @apiError (500) {Boolean} success Will be false if some server error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ * @apiUse AccountTypeMismatchError
+ * @apiUse UserUpdateError
  * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
@@ -642,7 +667,7 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
- *
+ * @apiUse UserUpdateError
  * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
@@ -677,7 +702,7 @@
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
  * @apiUse SuccessfulUpdate
- *
+ * @apiUse UserUpdateError
  * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
