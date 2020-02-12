@@ -73,7 +73,7 @@ const userSchema = new Schema({
     blockedBy: [{type: String, required: false}],
     allowedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
     prohibitedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
-    radius: {type: Number, required: true, default: 5, max: 100, min: 0.1},
+    radius: {type: Number, required: true, default: 5},
     homeownerInfo: {
         required: false,
         meetingPlace: { // when the user document is saved for the first time, this will default to same as the location if it is not set
@@ -177,7 +177,7 @@ userSchema.pre('save', function(next) {
     }
 
     // formatting the address properly
-    let state = user.location.state;
+    var state = user.location.state;
     state = state.toUpperCase();
     user.location.state = state;
 
@@ -207,14 +207,13 @@ userSchema.pre('save', function(next) {
 // of the meeting place and proper formatting everything properly
 userSchema.pre('save', function(next) {
     let user = this;
-    if (!user.isModified("homeownerInfo.meetingPlace")) {
+    if (!user.isModified("homeownerInfo.meetingPlace.address")) {
         return next();
     }
 
     // formatting the address properly
-    let state = user.homeownerInfo.meetingPlace.state;
-    state = state.toUpperCase();
-    user.homeownerInfo.meetingPlace.state = state;
+    var state = user.homeownerInfo.meetingPlace.state;
+    user.homeownerInfo.meetingPlace.state = state.toUpperCase();
 
     const addr = user.homeownerInfo.meetingPlace.address;
     user.homeownerInfo.meetingPlace.address = properFormat(addr);
@@ -230,13 +229,14 @@ userSchema.pre('save', function(next) {
             return next(err);
         }
         else {
-            console.log(response.json.results[0].geometry);
+            console.log(response.json.results[0].geometry.location);
             user.homeownerInfo.meetingPlace.lat = response.json.results[0].geometry.location.lat;
             user.homeownerInfo.meetingPlace.long = response.json.results[0].geometry.location.lng;
             console.log("lat: " + user.homeownerInfo.meetingPlace.lat + " long: " + user.homeownerInfo.meetingPlace.long);
+            next();
         }
     });
-    next();
+
 });
 
 // pre save hook for capitalizing allowed items
@@ -279,7 +279,7 @@ userSchema.pre('save', function (next) {
         return next();
     }
     let bWebsite = user.businessOwnerInfo.businessWebsite;
-    user.businessOwnerInfo.businessWebsite = bWebsite.toLowercase();
+    user.businessOwnerInfo.businessWebsite = bWebsite.toLowerCase();
     next();
 });
 
