@@ -210,10 +210,10 @@
  */
 
 /**
- * @api {patch} /preferences/profile * Modify or update a user's profile
+ * @api {patch} /preferences/profile Modify or update a user's profile
  * @apiName PatchProfile
  * @apiGroup Preferences.General
- * @apiDescription NI - This path will be called on whenever the user makes changes to their account and presses save. All fields are optional but at least one must be sent in for the request call to make sense.
+ * @apiDescription C - This path will be called on whenever the user makes changes to their account and presses save. All fields are optional but at least one must be sent in for the request call to make sense.
  *
  * @apiParam {String} id The id of the user and the only required field of this request.
  * @apiParam {String} [email] A unique email (This acts as their username)
