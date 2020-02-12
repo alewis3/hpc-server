@@ -133,6 +133,122 @@ router.post('/prohibitedItems', async function (req, res) {
     }
 });
 
+router.patch('/disableListing', async function(req, res) {
+    let id = req.body.id;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else {
+        if (user.accountType === "Homeowner") {
+            user.homeownerInfo.isListingOn = false;
+        }
+        else if (user.accountType === "Business Owner") {
+            user.businessOwnerInfo.isListingOn = false;
+        }
+        else {
+            return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+        }
+        await user.save();
+        User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
+    }
+});
+
+router.patch('/enableListing', async function(req, res) {
+    let id = req.body.id;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else {
+        if (user.accountType === "Homeowner") {
+            user.homeownerInfo.isListingOn = true;
+        }
+        else if (user.accountType === "Business Owner") {
+            user.businessOwnerInfo.isListingOn = true;
+        }
+        else {
+            return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+        }
+        await user.save();
+        User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
+    }
+});
+
+router.patch('/updateListing', async function(req, res) {
+    let id = req.body.id;
+    let isListingOn = req.body.isListingOn;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else if (is.not.boolean(isListingOn)) {
+        return res.status(400).send({success: false, error: "ParameterTypeMismatch"})
+    }
+    else {
+        if (user.accountType === "Homeowner") {
+            user.homeownerInfo.isListingOn = isListingOn;
+        }
+        else if (user.accountType === "Business Owner") {
+            user.businessOwnerInfo.isListingOn = isListingOn;
+        }
+        else {
+            return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+        }
+        return res.status(200).send({success: true});
+    }
+});
+
+router.get('isListingOn', async function(req, res) {
+    let id = req.query.id;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else {
+        var isListingOn;
+        if (user.accountType === "Homeowner") {
+            isListingOn = user.homeownerInfo.isListingOn;
+        }
+        else if (user.accountType === "Business Owner") {
+            isListingOn = user.businessOwnerInfo.isListingOn;
+        }
+        else {
+            return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+        }
+        return res.status(200).send({success: true, isListingOn: isListingOn});
+    }
+});
+
+/**
+ * Patch Profile
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_General-PatchProfile for more info
+ */
 router.patch('/profile', async function (req, res) {
    let body = req.body;
    let id = body.id;
@@ -278,12 +394,12 @@ router.patch('/profile', async function (req, res) {
     console.log("Saving user");
     await user.save();
     User.findById(id)
-        .then(function(result) {
+        .then(function() {
         res.status(200).send({success: true});
     })
         .catch(function(err) {
             res.status(500).send({success: false, error: err});
-        })
+        });
 });
 
 /**

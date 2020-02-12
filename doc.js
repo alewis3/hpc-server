@@ -445,10 +445,10 @@
  */
 
 /**
- * @api {patch} /preferences/enableListing * Enable a host's listing
+ * @api {patch} /preferences/enableListing Enable a host's listing
  * @apiName PatchEnableListing
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will enable a host's listing with only one parameter: the host's id.
+ * @apiDescription C - This route will enable a host's listing with only one parameter: the host's id.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  *
@@ -468,10 +468,10 @@
  */
 
 /**
- * @api {patch} /preferences/disableListing * Disable a host's listing
+ * @api {patch} /preferences/disableListing Disable a host's listing
  * @apiName PatchDisableListing
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will disable a host's listing with only one parameter: the host's id.
+ * @apiDescription C - This route will disable a host's listing with only one parameter: the host's id.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  *
@@ -491,10 +491,10 @@
  */
 
 /**
- * @api {patch} /preferences/updateListing * Update a host's listing as active or inactive
+ * @api {patch} /preferences/updateListing Update a host's listing as active or inactive
  * @apiName PatchUpdateListing
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will update a host's listing.
+ * @apiDescription C - This route will update a host's listing.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  * @apiParam {Boolean} isListingOn The boolean that isListingOn should be set to
@@ -512,13 +512,19 @@
  * @apiUse MissingIdError
  * @apiUse IdNotFoundError
  * @apiUse ServerError
+ * @apiErrorExample ParameterTypeMismatch:
+ *      HTTP/1.1 400 BAD REQUEST
+ *      {
+ *          "success": false,
+ *          "error": "ParameterTypeMismatch"
+ *      }
  */
 
 /**
- * @api {get} /preferences/isListingOn?id=XX * Get a host's current listing status
+ * @api {get} /preferences/isListingOn?id=XX Get a host's current listing status
  * @apiName PatchGetListing
  * @apiGroup Preferences.Specific
- * @apiDescription NI - This route will get a host's listing status.
+ * @apiDescription C - This route will get a host's listing status.
  *
  * @apiParam {String} id The id of the host, sent in the query string **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  *
