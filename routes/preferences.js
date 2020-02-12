@@ -537,7 +537,15 @@ router.patch('/homeownerInfo', async function(req, res) {
             return res.status(400).send({success: false, error: "UserUpdateError: isListingOn not a boolean"});
         }
 
-        return res.status(200).send({success: true});
+        await user.save();
+
+        User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
     }
 });
 
@@ -638,7 +646,16 @@ router.patch('/businessOwnerInfo', async function(req, res) {
             return res.status(400).send({success: false, error: "UserUpdateError: isListingOn not a boolean"});
         }
 
-        return res.status(200).send({success: true});
+        await user.save();
+
+        User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
+
     }
 });
 
