@@ -467,6 +467,85 @@ router.get('/profile', async function(req, res) {
     });
 });
 
+/**
+ * Patch homeownerInfo
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchHomeownerInfo for more info
+ */
+router.patch('/homeownerInfo', async function(req, res) {
+    let body = req.body;
+    let id = body.id;
+    if (is.undefined(id)) {
+        return res.status(400).send({success: false, error: "MissingId"})
+    }
+    let user = User.findById(id).exec();
+    if (!user) {
+        return res.status(404).send({ success: false, error: "IdNotFound" });
+    }
+    else if (user.accountType !== "Homeowner") {
+        return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
+    }
+    else {
+        // if the allowedItems is not empty, set it if they are not a contributor (Hosts only)
+        if (is.existy(body.allowedItems) && is.string(body.allowedItems)) {
+            console.log("updating allowed items");
+            user.allowedItems = body.allowedItems;
+        }
+        else if (is.existy(body.allowedItems)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Allowed items not a string"});
+        }
+
+
+        // if the prohibited items is not empty, set it if they are not a contributor (Hosts only)
+        if (is.existy(body.prohibitedItems) && is.string(body.prohibitedItems)) {
+            console.log("Updating prohibited items");
+            user.prohibitedItems = body.prohibitedItems;
+        }
+        else if (is.existy(body.prohibitedItems)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Prohibited items not a string"});
+        }
+
+        // if the radius is not empty, set it
+        if (is.existy(body.radius) && is.number(body.radius)) {
+            console.log("updating radius");
+            user.radius = body.radius;
+        }
+        else if (is.existy(body.radius)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Radius not a number"});
+        }
+
+        // if the location is not empty, set it
+        if (is.existy(body.location) && is.object(body.location)) {
+            console.log("updating location");
+            if (is.string(body.location.address) && is.string(body.location.city) && is.string(body.location.state) && is.number(body.location.zip)) {
+                user.location = body.location;
+            }
+            else {
+                return res.status(400).send({success: false, error: "UserUpdateError: Location components improperly formatted"});
+            }
+        }
+        else if (is.existy(body.location)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: Location not an object"});
+        }
+
+        // if the isListingOn field exists, change it
+        if (is.existy(body.isListingOn) && is.boolean(body.isListingOn)) {
+            console.log("Updating isListingOn");
+            user.businessOwnerInfo.isListingOn = body.isListingOn;
+        }
+        else if (is.existy(body.isListingOn)) {
+            return res.status(400).send({success: false, error: "UserUpdateError: isListingOn not a boolean"});
+        }
+
+        return res.status(200).send({success: true});
+    }
+});
+
+/**
+ * Patch businessOwnerInfo
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchBusinessOwnerInfo for more info
+ */
 router.patch('/businessOwnerInfo', async function(req, res) {
     let body = req.body;
     let id = body.id;
@@ -551,7 +630,7 @@ router.patch('/businessOwnerInfo', async function(req, res) {
         }
 
         // if the isListingOn field exists, change it
-        if (is.existy(body.isListingOn && is.boolean(body.isListingOn)) {
+        if (is.existy(body.isListingOn) && is.boolean(body.isListingOn)) {
             console.log("Updating isListingOn");
             user.businessOwnerInfo.isListingOn = body.isListingOn;
         }
