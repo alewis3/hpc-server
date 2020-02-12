@@ -515,12 +515,12 @@
  */
 
 /**
- * @api {get} /preferences/isListingOn * Get a host's current listing status
+ * @api {get} /preferences/isListingOn?id=XX * Get a host's current listing status
  * @apiName PatchGetListing
  * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will get a host's listing status.
  *
- * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
+ * @apiParam {String} id The id of the host, sent in the query string **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  *
  * @apiSuccess {Boolean} success Will be true if the listing could be updated as active.
  * @apiSuccess {Boolean} isListingOn Whether or not the listing is active at the time of the request.
