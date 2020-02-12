@@ -550,7 +550,7 @@
  */
 
 /**
- * @api {patch} /preferences/newHomeowner * Update a user's account type to "Homeowner"
+ * @api {patch} /preferences/homeownerInfo * Update a user's account type to "Homeowner"
  * @apiName PatchHomeownerInfo
  * @apiGroup Preferences.Specific
  * @apiDescription NI - This route will allow you to update a user's homeowner information, if they are a homeowner.
