@@ -582,6 +582,41 @@
  */
 
 /**
+ * @api {patch} /preferences/newBusinessOwner * Update a user's account type to "Business Owner"
+ * @apiName PatchBusinessOwnerAcctType
+ * @apiGroup Preferences.Specific
+ * @apiDescription NI - This route will allow you to update a user's accountType to "Business Owner", and set all the business owner information.
+ *
+ * @apiParam {String} id The id of the user to edit (*Must be a Business owner!*)
+ * @apiParam {String} allowedItems The items they allow.
+ * @apiParam {String} prohibitedItems The items they prohibit.
+ * @apiParam {String} businessName The name of the business
+ * @apiParam {String} businessWebsite The website of the business.
+ * @apiParam {Object} location An object containing address information oof the business.
+ * @apiParam {String} location.address The address of the business.
+ * @apiParam {String} location.city The city of the business.
+ * @apiParam {String{2}} location.state The state of the business (in two-letter abbreviation format i.e. 'TX' or 'CA')
+ * @apiParam {Number} location.zip The zip of the business.
+ * @apiParam {Number} contributorCharge How much they charge contributors to contribute.
+ * @apiParam {Boolean} isListingOn Whether or not their listing should be active.
+ * @apiParam {Number} radius The distance (in miles) of how far they want their post to display from their location/business address.
+ *
+ * @apiSuccess {Boolean} success Will be true if the new business owner's info could be successfully updated.
+ *
+ * @apiError {Boolean} success Will be false if some error occurred.
+ * @apiError {String} error A description of what error occurred.
+ *
+ * @apiError (500) {Boolean} success Will be false if some server error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
  * @api {patch} /preferences/homeownerInfo Update a homeowner's info
  * @apiName PatchHomeownerInfo
  * @apiGroup Preferences.Specific
