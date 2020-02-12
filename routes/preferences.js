@@ -87,7 +87,7 @@ router.post('/allowedItems', async function (req, res) {
     }
     else {
         user.allowedItems = json.allowedItems;
-        user.save(function(err) {
+        await user.save(function(err) {
             if (err) {
                 console.log(err);
                 return res.status(500).send({success: false, error: err});
@@ -121,7 +121,7 @@ router.post('/prohibitedItems', async function (req, res) {
     }
     else {
         user.prohibitedItems = json.prohibitedItems;
-        user.save(function(err) {
+        await user.save(function(err) {
             if (err) {
                 console.log(err);
                 return res.status(500).send({success: false, error: "User could not be saved"});
@@ -143,7 +143,7 @@ router.patch('/disableListing', async function(req, res) {
     if (is.undefined(id)) {
         return res.status(400).send({success: false, error: "MissingId"})
     }
-    let user = User.findById(id).exec();
+    let user = await User.findById(id).exec();
     if (!user) {
         return res.status(404).send({ success: false, error: "IdNotFound" });
     }
@@ -158,7 +158,7 @@ router.patch('/disableListing', async function(req, res) {
             return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
         }
         await user.save();
-        User.findById(id)
+        await User.findById(id)
             .then(function() {
                 res.status(200).send({success: true});
             })
@@ -178,7 +178,7 @@ router.patch('/enableListing', async function(req, res) {
     if (is.undefined(id)) {
         return res.status(400).send({success: false, error: "MissingId"})
     }
-    let user = User.findById(id).exec();
+    let user = await User.findById(id).exec();
     if (!user) {
         return res.status(404).send({ success: false, error: "IdNotFound" });
     }
@@ -193,7 +193,7 @@ router.patch('/enableListing', async function(req, res) {
             return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
         }
         await user.save();
-        User.findById(id)
+        await User.findById(id)
             .then(function() {
                 res.status(200).send({success: true});
             })
@@ -214,7 +214,7 @@ router.patch('/updateListing', async function(req, res) {
     if (is.undefined(id)) {
         return res.status(400).send({success: false, error: "MissingId"})
     }
-    let user = User.findById(id).exec();
+    let user = await User.findById(id).exec();
     if (!user) {
         return res.status(404).send({ success: false, error: "IdNotFound" });
     }
@@ -231,7 +231,14 @@ router.patch('/updateListing', async function(req, res) {
         else {
             return res.status(400).send({success: false, error: "AccountTypeMismatch: Contributor"});
         }
-        return res.status(200).send({success: true});
+        await user.save();
+        await User.findById(id)
+            .then(function() {
+                res.status(200).send({success: true});
+            })
+            .catch(function(err) {
+                res.status(500).send({success: false, error: err});
+            });
     }
 });
 
@@ -245,12 +252,14 @@ router.get('/isListingOn', async function(req, res) {
     if (is.undefined(id)) {
         return res.status(400).send({success: false, error: "MissingId"})
     }
-    let user = User.findById(id).exec();
+    let user = await User.findById(id).exec();
     if (!user) {
         return res.status(404).send({ success: false, error: "IdNotFound" });
     }
     else {
         var isListingOn;
+        console.log(user);
+        console.log(user.accountType);
         if (user.accountType === "Homeowner") {
             isListingOn = user.homeownerInfo.isListingOn;
         }
@@ -413,7 +422,7 @@ router.patch('/profile', async function (req, res) {
 
     console.log("Saving user");
     await user.save();
-    User.findById(id)
+    await User.findById(id)
         .then(function() {
         res.status(200).send({success: true});
     })
@@ -478,7 +487,7 @@ router.patch('/homeownerInfo', async function(req, res) {
     if (is.undefined(id)) {
         return res.status(400).send({success: false, error: "MissingId"})
     }
-    let user = User.findById(id).exec();
+    let user = await User.findById(id).exec();
     if (!user) {
         return res.status(404).send({ success: false, error: "IdNotFound" });
     }
@@ -539,7 +548,7 @@ router.patch('/homeownerInfo', async function(req, res) {
 
         await user.save();
 
-        User.findById(id)
+        await User.findById(id)
             .then(function() {
                 res.status(200).send({success: true});
             })
@@ -560,7 +569,7 @@ router.patch('/businessOwnerInfo', async function(req, res) {
     if (is.undefined(id)) {
         return res.status(400).send({success: false, error: "MissingId"})
     }
-    let user = User.findById(id).exec();
+    let user = await User.findById(id).exec();
     if (!user) {
         return res.status(404).send({ success: false, error: "IdNotFound" });
     }
@@ -648,7 +657,7 @@ router.patch('/businessOwnerInfo', async function(req, res) {
 
         await user.save();
 
-        User.findById(id)
+        await User.findById(id)
             .then(function() {
                 res.status(200).send({success: true});
             })
