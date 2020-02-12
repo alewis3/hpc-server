@@ -353,17 +353,30 @@ userSchema.methods.findBlockedBy = function(cb) {
  * _id to the blocked users blockedBy list
  */
 userSchema.methods.blockUser = function(blocked, cb) {
-    var blockedUser = this.model('User').find({'_id': blocked._id}, cb);
-    var blockedUsersSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {blockedUsers: {$addToSet: blockedUser._id}}}, function(err, doc) {
-        if (err) return false;
-        else return true;
+    var blockedUser = this.model('User').findById(blocked._id).exec();
+    var blockedUsersSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$addToSet: {blockedUsers: blockedUser._id}}, function(err) {
+        return !err;
     });
-    var blockedBySet = this.model('User').findOneAndUpdate({'_id': {$eq: blockedUser._id}}, {$set: {blockedBy: {$addToSet: this._id}}}, function(err, doc) {
-        if (err) return false;
-        else return true;
+    var blockedBySet = this.model('User').findOneAndUpdate({'_id': {$eq: blockedUser._id}}, {$addToSet: {blockedBy: this._id}}, function(err) {
+        return !err;
     });
-    if(blockedUsersSet && blockedBySet) return true;
-    else return false;
+    return !!(blockedUsersSet && blockedBySet);
+};
+
+/*
+ * This method will unblock a user by taking a user to unblock (unblocked) and will
+ * both remove that user's _id from this user's blockedUsers array and remove this
+ * user's _id from the blocked users blockedBy list
+ */
+userSchema.methods.unblockUser = function (unblocked, cb) {
+  var unblockedUser = this.model('User').findById(unblocked._id).exec();
+  var unblockedUserRemoved = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$pull: {blockedUsers: unblockedUser._id}}, function(err) {
+      return !err;
+  });
+  var unblockedByUserRemoved = this.model('User').findOneAndUpdate({'_id': {$eq: unblockedUser._id}}, {$pull: {blockedBy: this._id}}, function (err) {
+      return !err;
+  });
+  return !!(unblockedByUserRemoved && unblockedUserRemoved);
 };
 
 /*
