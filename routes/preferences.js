@@ -133,6 +133,11 @@ router.post('/prohibitedItems', async function (req, res) {
     }
 });
 
+/**
+ * Patch disable listing
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchDisableListing for more info
+ */
 router.patch('/disableListing', async function(req, res) {
     let id = req.body.id;
     if (is.undefined(id)) {
@@ -163,6 +168,11 @@ router.patch('/disableListing', async function(req, res) {
     }
 });
 
+/**
+ * Patch enable listing
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchEnableListing for more info
+ */
 router.patch('/enableListing', async function(req, res) {
     let id = req.body.id;
     if (is.undefined(id)) {
@@ -193,6 +203,11 @@ router.patch('/enableListing', async function(req, res) {
     }
 });
 
+/**
+ * Patch update listing
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchUpdateListing for more info
+ */
 router.patch('/updateListing', async function(req, res) {
     let id = req.body.id;
     let isListingOn = req.body.isListingOn;
@@ -220,6 +235,11 @@ router.patch('/updateListing', async function(req, res) {
     }
 });
 
+/**
+ * Get isListingOn
+ *
+ * See https://hpcompost.com/api/docs#api-Preferences_Specific-PatchGetListing for more info
+ */
 router.get('isListingOn', async function(req, res) {
     let id = req.query.id;
     if (is.undefined(id)) {
