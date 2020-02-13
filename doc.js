@@ -1035,10 +1035,10 @@
  */
 
 /**
- * @api {patch} /users/blockUser * Blocks a user
+ * @api {patch} /users/blockUserBlocks a user
  * @apiName PatchBlockUser
  * @apiGroup Users
- * @apiDescription NI - This route lets a user (blockingUser) block another user (blockedUser).
+ * @apiDescription C - This route lets a user (blockingUser) block another user (blockedUser).
  *
  * @apiParam {String} blockingUser The user that wants to block another user.
  * @apiParam {String} blockedUser The user to be blocked
@@ -1065,10 +1065,10 @@
  */
 
 /**
- * @api {patch} /users/unblockUser * Unblocks a user
+ * @api {patch} /users/unblockUser Unblocks a user
  * @apiName PatchUnblockUser
  * @apiGroup Users
- * @apiDescription NI - This route lets a user (unblockingUser) unblock another user (unblockedUser).
+ * @apiDescription C - This route lets a user (unblockingUser) unblock another user (unblockedUser).
  *
  * @apiParam {String} unblockingUser The user that wants to unblock another user.
  * @apiParam {String} unblockedUser The user to be unblocked
@@ -1087,9 +1087,33 @@
  * @apiUse IdNotFoundError
  * @apiUse ServerError
  * @apiErrorExample UserNotBlocked:
- *      HTTP/1.1 400
+ *      HTTP/1.1 400 BAD REQUEST
  *      {
  *          "success": false,
  *          "error": "UserNotBlocked"
+ *      }
+ */
+
+/**
+ * @api {get} /users/getId * Get user id from email
+ * @apiName GetId
+ * @apiGroup Users
+ * @apiDescription NI - This route enables you to give an email and get back the user's _id.
+ *
+ * @apiParam {String} email The email of the user that you want to get the id from.
+ *
+ * @apiSuccess {Boolean} success Will be true if the user could be successfully unblocked
+ *
+ * @apiError {Boolean} success Will be false if the user could not be unblocked
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiErrorExample EmailNotFound:
+ *      HTTP/1.1 400 BAD REQUEST
+ *      {
+ *          "success" : false,
+ *          "error": "EmailNotFound"
  *      }
  */
