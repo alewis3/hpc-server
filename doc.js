@@ -1111,6 +1111,12 @@
  * @apiError (500) {Boolean} success Will be false if some error occurred.
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
+ * @apiSuccessExample SuccessfulRequest:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "success": true,
+ *          "id": "5e417bea49501e733f4c6a98"
+ *      }
  * @apiErrorExample EmailNotFound:
  *      HTTP/1.1 400 BAD REQUEST
  *      {
