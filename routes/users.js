@@ -254,4 +254,70 @@ router.post('/resetPassword', async function (req, res) {
     }
 });
 
+/**
+ * Patch block user
+ *
+ * See https://hpcompost.com/api/docs#api-Users-PatchBlockUser for more information
+ */
+router.patch('/blockUser', async function(req, res) {
+   let body = req.body;
+    if (body.blockingUser === body.blockedUser) {
+        return res.status(400).send({success: false, error: "A user cannot block thyself!."});
+    }
+   let blockingUser = await User.findById(body.blockingUser).exec();
+   let blockedUser = await User.findById(body.blockedUser).exec();
+   if (!blockingUser) {
+       return res.status(400).send({success: false, error: "Blocking User does not exist."});
+   }
+    else if (!blockedUser) {
+        return res.status(400).send({success: false, error: "Blocked User does not exist."});
+    }
+    if (!blockingUser.blockedUsers.includes(blockedUser._id) || !blockedUser.blockedBy.includes(blockingUser._id)) {
+        let blocked = blockingUser.blockUser(blockedUser, function (err) {
+            return !err;
+        });
+        if (blocked) {
+            return res.status(200).send({success: true});
+        } else {
+            return res.status(500).send({success: false, error: "Unable to block"})
+        }
+    }
+    else {
+        return res.status(400).send({success: false, error: "User already blocked."})
+    }
+});
+
+/**
+ * Patch unblock user
+ *
+ * See https://hpcompost.com/api/docs#api-Users-PatchUnblockUser for more information
+ */
+router.patch('/unblockUser', async function(req, res) {
+    let body = req.body;
+    if (body.unblockingUser === body.unblockedUser) {
+        return res.status(400).send({success: false, error: "A user cannot block thyself!."});
+    }
+    let unblockingUser = await User.findById(body.unblockingUser).exec();
+    let unblockedUser = await User.findById(body.unblockedUser).exec();
+    if (!unblockingUser) {
+        return res.status(400).send({success: false, error: "Unblocking User does not exist."});
+    }
+    else if (!unblockedUser) {
+        return res.status(400).send({success: false, error: "Unblocked User does not exist."});
+    }
+    if (unblockingUser.blockedUsers.includes(unblockedUser._id) && unblockedUser.blockedBy.includes(unblockingUser._id)) {
+        let unblocked = unblockingUser.unblockUser(unblockedUser, function (err) {
+            return !err;
+        });
+        if (unblocked) {
+            return res.status(200).send({success: true});
+        } else {
+            return res.status(500).send({success: false, error: "Unable to unblock"})
+        }
+    }
+    else {
+        return res.status(400).send({success: false, error: "User is not blocked."})
+    }
+});
+
 module.exports = router;

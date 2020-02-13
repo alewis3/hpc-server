@@ -352,12 +352,12 @@ userSchema.methods.findBlockedBy = function(cb) {
  * both add that user's _id to this user's blockedUsers array and add this user's
  * _id to the blocked users blockedBy list
  */
-userSchema.methods.blockUser = function(blocked, cb) {
-    var blockedUser = this.model('User').findById(blocked._id).exec();
-    var blockedUsersSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$addToSet: {blockedUsers: blockedUser._id}}, function(err) {
+userSchema.methods.blockUser = async function(blocked, cb) {
+    var blockedUser = await this.model('User').findById(blocked._id).exec();
+    var blockedUsersSet = await this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$addToSet: {blockedUsers: blockedUser._id}}, function(err) {
         return !err;
     });
-    var blockedBySet = this.model('User').findOneAndUpdate({'_id': {$eq: blockedUser._id}}, {$addToSet: {blockedBy: this._id}}, function(err) {
+    var blockedBySet = await this.model('User').findOneAndUpdate({'_id': {$eq: blockedUser._id}}, {$addToSet: {blockedBy: this._id}}, function(err) {
         return !err;
     });
     return !!(blockedUsersSet && blockedBySet);
@@ -368,12 +368,12 @@ userSchema.methods.blockUser = function(blocked, cb) {
  * both remove that user's _id from this user's blockedUsers array and remove this
  * user's _id from the blocked users blockedBy list
  */
-userSchema.methods.unblockUser = function (unblocked, cb) {
-  var unblockedUser = this.model('User').findById(unblocked._id).exec();
-  var unblockedUserRemoved = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$pull: {blockedUsers: unblockedUser._id}}, function(err) {
+userSchema.methods.unblockUser = async function (unblocked, cb) {
+  var unblockedUser = await this.model('User').findById(unblocked._id).exec();
+  var unblockedUserRemoved = await this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$pull: {blockedUsers: unblockedUser._id}}, function(err) {
       return !err;
   });
-  var unblockedByUserRemoved = this.model('User').findOneAndUpdate({'_id': {$eq: unblockedUser._id}}, {$pull: {blockedBy: this._id}}, function (err) {
+  var unblockedByUserRemoved = await this.model('User').findOneAndUpdate({'_id': {$eq: unblockedUser._id}}, {$pull: {blockedBy: this._id}}, function (err) {
       return !err;
   });
   return !!(unblockedByUserRemoved && unblockedUserRemoved);
