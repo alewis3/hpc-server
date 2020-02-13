@@ -1095,12 +1095,12 @@
  */
 
 /**
- * @api {get} /users/getId * Get user id from email
+ * @api {get} /users/getId?email=XX@gmail.com Get user id from email
  * @apiName GetId
  * @apiGroup Users
- * @apiDescription NI - This route enables you to give an email and get back the user's _id.
+ * @apiDescription C - This route enables you to give an email and get back the user's _id.
  *
- * @apiParam {String} email The email of the user that you want to get the id from.
+ * @apiParam {String} email The email of the user that you want to get the id from, sent in the query.
  *
  * @apiSuccess {Boolean} success Will be true if the user could be successfully unblocked
  * @apiSuccess {String} id The id of the user.

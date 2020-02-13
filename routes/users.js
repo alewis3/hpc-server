@@ -320,4 +320,20 @@ router.patch('/unblockUser', async function(req, res) {
     }
 });
 
+/**
+ * Get User id from email
+ *
+ * See https://hpcompost.com/api/docs#api-Users-GetId for more info
+ */
+router.get('/getId', async function(req, res) {
+    let email = req.query.email;
+    let user = await User.findOne({email: email}).exec();
+    if (!user) {
+        return res.status(400).send({success: false, error: "EmailNotFound"});
+    }
+    else {
+        return res.status(200).send({success: true, id: user._id});
+    }
+});
+
 module.exports = router;
