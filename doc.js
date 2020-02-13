@@ -1035,7 +1035,7 @@
  */
 
 /**
- * @api {patch} /users/blockUserBlocks a user
+ * @api {patch} /users/blockUser Blocks a user
  * @apiName PatchBlockUser
  * @apiGroup Users
  * @apiDescription C - This route lets a user (blockingUser) block another user (blockedUser).
