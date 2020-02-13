@@ -1103,6 +1103,7 @@
  * @apiParam {String} email The email of the user that you want to get the id from.
  *
  * @apiSuccess {Boolean} success Will be true if the user could be successfully unblocked
+ * @apiSuccess {String} id The id of the user.
  *
  * @apiError {Boolean} success Will be false if the user could not be unblocked
  * @apiError {String} error The error that caused success to be false
