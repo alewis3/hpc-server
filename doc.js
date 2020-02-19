@@ -38,7 +38,7 @@
  *      HTTP/1.1 400 BAD REQUEST
  *      {
  *          "success": false,
- *          "error": "MissingId" // id was not in the body of the request
+ *          "error": "The id does not exist!" // id was not in the body of the request
  *      }
  */
 
@@ -1070,8 +1070,8 @@
  * @apiGroup Users
  * @apiDescription C - This route lets a user (unblockingUser) unblock another user (unblockedUser).
  *
- * @apiParam {String} unblockingUser The user that wants to unblock another user.
- * @apiParam {String} unblockedUser The user to be unblocked
+ * @apiParam {String} unblockingUser The id of the user that wants to unblock another user.
+ * @apiParam {String} unblockedUser The id of the user to be unblocked
  *
  * @apiSuccess {Boolean} success Will be true if the user could be successfully unblocked
  *
@@ -1092,6 +1092,114 @@
  *          "success": false,
  *          "error": "UserNotBlocked"
  *      }
+ */
+
+/**
+ * @api {patch} /users/blockUserEmail Blocks a user by email
+ * @apiName PatchBlockUserEmail
+ * @apiGroup Users
+ * @apiDescription C - This route lets a user (blockingUser) block another user (blockedUser).
+ *
+ * @apiParam {String} blockingUser The email of the user that wants to block another user.
+ * @apiParam {String} blockedUser The email of the user to be blocked
+ *
+ * @apiSuccess {Boolean} success Will be true if the user could be blocked
+ *
+ * @apiError {Boolean} success Will be false if the user could not be blocked for any reason
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ * @apiErrorExample UserAlreadyBlocked:
+ *      HTTP/1.1 400
+ *      {
+ *          "success": false,
+ *          "error": "UserAlreadyBlocked"
+ *      }
+ */
+
+/**
+ * @api {patch} /users/unblockUserEmail Unblocks a user by email
+ * @apiName PatchUnblockUserEmail
+ * @apiGroup Users
+ * @apiDescription C - This route lets a user (unblockingUser) unblock another user (unblockedUser).
+ *
+ * @apiParam {String} unblockingUser The email of the user that wants to unblock another user.
+ * @apiParam {String} unblockedUser The email of the user to be unblocked
+ *
+ * @apiSuccess {Boolean} success Will be true if the user could be successfully unblocked
+ *
+ * @apiError {Boolean} success Will be false if the user could not be unblocked
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ * @apiErrorExample UserNotBlocked:
+ *      HTTP/1.1 400 BAD REQUEST
+ *      {
+ *          "success": false,
+ *          "error": "UserNotBlocked"
+ *      }
+ */
+
+/**
+ * @api {get} /preferences/blockedUsers?id=XX Get blocked users for one specific user.
+ * @apiName GetBlockedUsers
+ * @apiGroup Preferences.Specific
+ * @apiDescription C - This route lets you grab all blocked users for one user in particular.
+ *
+ * @apiParam {String} id The id of the user you want to check for
+ *
+ * @apiSuccess {Boolean} success Will be true if the list of blocked users could be grabbed.
+ * @apiSuccess {Object[]} blockedUsers The list of blocked users for that user.
+ *
+ * @apiError {Boolean} success Will be false if the user could not be unblocked
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
+ * @api {get} /preferences/blockedBy?id=XX Get all the users that have blocked this user
+ * @apiName GetBlockedBy
+ * @apiGroup Preferences.Specific
+ * @apiDescription C - This route lets you grab all users that have blocked this user.
+ *
+ * @apiParam {String} id The id of the user you want to check for
+ *
+ * @apiSuccess {Boolean} success Will be true if the blockedBy list could be grabbed
+ * @apiSuccess {Object[]} blockedBy The list of users that have blocked this user.
+ *
+ * @apiError {Boolean} success Will be false if the user could not be unblocked
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiUse SuccessfulUpdate
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
  */
 
 /**

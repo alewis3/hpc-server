@@ -943,4 +943,46 @@ router.patch('/newBusinessOwner', async function(req, res) {
     }
 });
 
+router.get('/blockedUsers', async function (req, res) {
+    let id = req.query.id;
+    if (!id) {
+        return res.status(400).send({success: false, error: "MissingId"});
+    }
+     let user = await User.findById(id).exec();
+    if (!user) {
+        return res.status(400).send({success: false, error: "IdNotFound"});
+    }
+    else {
+        user.findBlockedUsers(function(err, blocked) {
+            if (!err) {
+                return res.status(200).send({success: true, blockedUsers: blocked});
+            }
+            else {
+                return res.status(500).send({success: false, error: err});
+            }
+        })
+    }
+});
+
+router.get('/blockedBy', async function (req, res) {
+    let id = req.query.id;
+    if (!id) {
+        return res.status(400).send({success: false, error: "MissingId"});
+    }
+    let user = await User.findById(id).exec();
+    if (!user) {
+        return res.status(400).send({success: false, error: "IdNotFound"});
+    }
+    else {
+        user.findBlockedBy(function(err, blockedBy) {
+            if (!err) {
+                return res.status(200).send({success: true, blockedBy: blockedBy});
+            }
+            else {
+                return res.status(500).send({success: false, error: err});
+            }
+        })
+    }
+});
+
 module.exports = router;

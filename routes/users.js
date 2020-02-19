@@ -107,6 +107,9 @@ router.post('/login', async (req, res) => {
   const json = req.body;
   const email = json.email;
   const password = json.password;
+  if (!email || !password) {
+      return res.status(400).send({success: false, error: "MissingFields"});
+  }
   await User.findOne({ email: email }).exec(function (err, user) {
       if (err) return res.status(500).send({loginStatus: false, error: err});
       else {
@@ -131,6 +134,9 @@ router.post('/login', async (req, res) => {
  */
 router.get('/hostsAll', async function(req, res) {
     var userId = req.query.id;
+    if (!userId) {
+        return res.status(400).send({success: false, error: "MissingId"});
+    }
     var user = await User.findById(userId).exec();
     if(!user) {
         return res.type('json').status(404).send({ success: false, error: "IdNotFound"});
@@ -167,6 +173,9 @@ router.get('/hostsAll', async function(req, res) {
  */
 router.get('/hosts', async function(req, res) {
     var userId = req.query.id;
+    if (!userId) {
+        return res.status(400).send({success: false, error: "MissingId"});
+    }
     var user = await User.findById(userId).exec();
     if(!user) {
         return res.type('json').status(404).send({ success: false, error: "IdNotFound"});
@@ -224,6 +233,9 @@ router.get('/hosts', async function(req, res) {
  */
 router.post('/resetPassword', async function (req, res) {
     var json = req.body;
+    if (!json.id) {
+        return res.status(400).send({success: false, error: "MissingId"});
+    }
     var user = await User.findById(json.id).exec();
 
     // check to make sure we got a user back
@@ -261,6 +273,9 @@ router.post('/resetPassword', async function (req, res) {
  */
 router.patch('/blockUser', async function(req, res) {
    let body = req.body;
+    if (!body.blockingUser || !body.blockedUser) {
+        return res.status(400).send({success: false, error: "MissingId"});
+    }
     if (body.blockingUser === body.blockedUser) {
         return res.status(400).send({success: false, error: "A user cannot block thyself!."});
     }
@@ -294,11 +309,86 @@ router.patch('/blockUser', async function(req, res) {
  */
 router.patch('/unblockUser', async function(req, res) {
     let body = req.body;
+    if (!body.unblockingUser || !body.unblockedUser) {
+        return res.status(400).send({success: false, error: "MissingId"});
+    }
     if (body.unblockingUser === body.unblockedUser) {
         return res.status(400).send({success: false, error: "A user cannot block thyself!."});
     }
     let unblockingUser = await User.findById(body.unblockingUser).exec();
     let unblockedUser = await User.findById(body.unblockedUser).exec();
+    if (!unblockingUser) {
+        return res.status(400).send({success: false, error: "Unblocking User does not exist."});
+    }
+    else if (!unblockedUser) {
+        return res.status(400).send({success: false, error: "Unblocked User does not exist."});
+    }
+    if (unblockingUser.blockedUsers.includes(unblockedUser._id) && unblockedUser.blockedBy.includes(unblockingUser._id)) {
+        let unblocked = unblockingUser.unblockUser(unblockedUser, function (err) {
+            return !err;
+        });
+        if (unblocked) {
+            return res.status(200).send({success: true});
+        } else {
+            return res.status(500).send({success: false, error: "Unable to unblock"})
+        }
+    }
+    else {
+        return res.status(400).send({success: false, error: "User is not blocked."})
+    }
+});
+
+/**
+ * Patch block user by email
+ *
+ * See https://hpcompost.com/api/docs#api-Users-PatchBlockUserEmail for more information
+ */
+router.patch('/blockUserEmail', async function(req, res) {
+    let body = req.body;
+    if (!body.blockingUser || !body.blockedUser) {
+        return res.status(400).send({success: false, error: "MissingEmail"});
+    }
+    if (body.blockingUser === body.blockedUser) {
+        return res.status(400).send({success: false, error: "A user cannot block thyself!."});
+    }
+    let blockingUser = await User.findOne({email: body.blockingUser}).exec();
+    let blockedUser = await User.findOne({email: body.blockedUser}).exec();
+    if (!blockingUser) {
+        return res.status(400).send({success: false, error: "Blocking User does not exist."});
+    }
+    else if (!blockedUser) {
+        return res.status(400).send({success: false, error: "Blocked User does not exist."});
+    }
+    if (!blockingUser.blockedUsers.includes(blockedUser._id) || !blockedUser.blockedBy.includes(blockingUser._id)) {
+        let blocked = blockingUser.blockUser(blockedUser, function (err) {
+            return !err;
+        });
+        if (blocked) {
+            return res.status(200).send({success: true});
+        } else {
+            return res.status(500).send({success: false, error: "Unable to block"})
+        }
+    }
+    else {
+        return res.status(400).send({success: false, error: "User already blocked."})
+    }
+});
+
+/**
+ * Patch unblock user by email
+ *
+ * See https://hpcompost.com/api/docs#api-Users-PatchUnblockUserEmail for more information
+ */
+router.patch('/unblockUserEmail', async function(req, res) {
+    let body = req.body;
+    if (!body.unblockingUser || !body.unblockedUser) {
+        return res.status(400).send({success: false, error: "MissingEmail"});
+    }
+    if (body.unblockingUser === body.unblockedUser) {
+        return res.status(400).send({success: false, error: "A user cannot block thyself!"});
+    }
+    let unblockingUser = await User.findOne({email: body.unblockingUser}).exec();
+    let unblockedUser = await User.findOne({email: body.unblockedUser}).exec();
     if (!unblockingUser) {
         return res.status(400).send({success: false, error: "Unblocking User does not exist."});
     }
