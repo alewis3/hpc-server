@@ -6,7 +6,11 @@ mongoose.set('useFindAndModify', false);
 const messageSchema = new Schema({
    senderId: String,
    receiverId: String,
-   message: String
+   message: String,
+   sentAt: {
+      type: Date,
+      default: Date.now()
+   }
 });
 
 module.exports = mongoose.model('Message', messageSchema);
