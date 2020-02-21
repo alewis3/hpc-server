@@ -1313,6 +1313,7 @@
  *
  * @apiParam {String} senderId The id of the user that is sending the message
  * @apiParam {String} receiverId The id of the user that they are sending the message to
+ * @apiParam {String} message The message to send
  *
  * @apiSuccess {Boolean} success Will be true if the message could be sent
  *
