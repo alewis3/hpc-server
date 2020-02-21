@@ -1211,7 +1211,7 @@
  * @apiParam {String} id The id of the user to load messages for
  *
  * @apiSuccess {Boolean} success Will be true if the conversations could be grabbed
- * @apiSuccess {Object[]} conversations The list of ids and user info that they are messaging with
+ * @apiSuccess {Object[]} conversations The list of ids and user info that they are messaging with (most recent first)
  * @apiSuccess {String} conversations.id The id of the user they are messaging with
  * @apiSuccess {String} conversations.email The email of the user they are messaging with
  * @apiSuccess {Object} conversations.name The object containing the name of the person they are messaging with
@@ -1263,7 +1263,7 @@
  * @apiParam {String} otherId The id of the user that they are messaging with
  *
  * @apiSuccess {Boolean} success Will be true if the conversation could be grabbed
- * @apiSuccess {Object[]} messages The list of ids and user info that they are messaging with
+ * @apiSuccess {Object[]} messages The list of ids and user info that they are messaging with (most recent first)
  * @apiSuccess {Date} messages.sentAt The date/time when the message was sent
  * @apiSuccess {String} messages.senderId The id of the user that sent the message
  * @apiSuccess {String} messages.receiverId The id of the user that received the message
@@ -1281,13 +1281,13 @@
  *          "success": true,
  *          "messages" :[
  *              {
- *                  "sentAt": ISODate("2020-02-21T17:15:22.743Z"),
+ *                  "sentAt": "2020-02-21T17:15:22.743Z",
  *                  "senderId": "5de5334cf7bdb6eeb7edf5f7",
  *                  "receiverId": "5de53318f7bdb6eeb7edf5f6",
  *                  "message": "Hello"
  *              },
  *              {
- *                  "sentAt": ISODate("2020-02-21T17:15:22.743Z"),
+ *                  "sentAt": "2020-02-21T17:45:25.870Z",
  *                  "senderId": "5de53318f7bdb6eeb7edf5f6",
  *                  "receiverId": "5de5334cf7bdb6eeb7edf5f7",
  *                  "message": "world"
