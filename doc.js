@@ -1206,7 +1206,7 @@
  * @api {get} /messages/conversations?id=XX Get all conversations this user is involved in
  * @apiName GetConversations
  * @apiGroup Messages
- * @apiDescription WIP - This endpoint will be called to load the list of conversations in the side panel for a user
+ * @apiDescription C - This endpoint will be called to load the list of conversations in the side panel for a user
  *
  * @apiParam {String} id The id of the user to load messages for
  *
@@ -1257,7 +1257,7 @@
  * @api {get} /messages/conversation?loggedInId=XX&otherId=XX Get a specific conversation with a specific user
  * @apiName GetConversation
  * @apiGroup Messages
- * @apiDescription WIP - This endpoint will be called to load a conversation between two users
+ * @apiDescription C - This endpoint will be called to load a conversation between two users
  *
  * @apiParam {String} loggedInId The id of the user that is loading messages
  * @apiParam {String} otherId The id of the user that they are messaging with
@@ -1312,7 +1312,7 @@
  * @api {post} /messages Send a message to a user
  * @apiName PostMessage
  * @apiGroup Messages
- * @apiDescription WIP - This endpoint will be called to send a message and save it in the DB
+ * @apiDescription C - This endpoint will be called to send a message and save it in the DB
  *
  * @apiParam {String} senderId The id of the user that is sending the message
  * @apiParam {String} receiverId The id of the user that they are sending the message to
