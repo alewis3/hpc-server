@@ -1203,6 +1203,137 @@
  */
 
 /**
+ * @api {get} /messages/conversations?id=XX Get all conversations this user is involved in
+ * @apiName GetConversations
+ * @apiGroup Messages
+ * @apiDescription WIP - This endpoint will be called to load the list of conversations in the side panel for a user
+ *
+ * @apiParam {String} id The id of the user to load messages for
+ *
+ * @apiSuccess {Boolean} success Will be true if the conversations could be grabbed
+ * @apiSuccess {Object[]} conversations The list of ids and user info that they are messaging with
+ * @apiSuccess {String} conversations.id The id of the user they are messaging with
+ * @apiSuccess {String} conversations.email The email of the user they are messaging with
+ * @apiSuccess {Object} conversations.name The object containing the name of the person they are messaging with
+ * @apiSuccess {String} conversations.name.first The first name of the person they are messaging with
+ * @apiSuccess {String} conversations.name.last The last name of the person they are messaging with
+ *
+ * @apiError {Boolean} success Will be false if the user could not be unblocked
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiSuccessExample SuccessfulGet:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "success": true,
+ *          "conversations" :[
+ *              {
+ *                  "id": "5de5334cf7bdb6eeb7edf5f7",
+ *                  "email": "alewis3@stedwards.edu",
+ *                  "name": {
+ *                      "first": "Amanda",
+ *                      "last": "Lewis"
+ *                  }
+ *              },
+ *              ...
+ *          ]
+ *      }
+ *
+ * @apiSuccessExample SuccessfulGet:
+ *      HTTP/1.1 204 NO CONTENT
+ *      {
+ *          "success": true,
+ *          "conversations" :[]
+ *      }
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
+ * @api {get} /messages/conversation?loggedInId=XX&otherId=XX Get a specific conversation with a specific user
+ * @apiName GetConversation
+ * @apiGroup Messages
+ * @apiDescription WIP - This endpoint will be called to load a conversation between two users
+ *
+ * @apiParam {String} loggedInId The id of the user that is loading messages
+ * @apiParam {String} otherId The id of the user that they are messaging with
+ *
+ * @apiSuccess {Boolean} success Will be true if the conversation could be grabbed
+ * @apiSuccess {Object[]} messages The list of ids and user info that they are messaging with
+ * @apiSuccess {String} messages.senderId The id of the user that sent the message
+ * @apiSuccess {String} messages.receiverId The id of the user that received the message
+ * @apiSuccess {String} messages.message The message that was sent
+ *
+ * @apiError {Boolean} success Will be false if the user could not be unblocked
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiSuccessExample SuccessfulGet:
+ *      HTTP/1.1 200 OK
+ *      {
+ *          "success": true,
+ *          "messages" :[
+ *              {
+ *                  "senderId": "5de5334cf7bdb6eeb7edf5f7",
+ *                  "receiverId": "5de53318f7bdb6eeb7edf5f6",
+ *                  "message": "Hello"
+ *              },
+ *              {
+ *                  "senderId": "5de53318f7bdb6eeb7edf5f6",
+ *                  "receiverId": "5de5334cf7bdb6eeb7edf5f7",
+ *                  "message": "world"
+ *              },
+ *              ...
+ *          ]
+ *      }
+ *
+ * @apiSuccessExample SuccessfulGet:
+ *      HTTP/1.1 204 NO CONTENT
+ *      {
+ *          "success": true,
+ *          "messages" :[]
+ *      }
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
+ * @api {post} /messages Send a message to a user
+ * @apiName PostMessage
+ * @apiGroup Messages
+ * @apiDescription WIP - This endpoint will be called to send a message and save it in the DB
+ *
+ * @apiParam {String} senderId The id of the user that is sending the message
+ * @apiParam {String} receiverId The id of the user that they are sending the message to
+ *
+ * @apiSuccess {Boolean} success Will be true if the message could be sent
+ *
+ * @apiError {Boolean} success Will be false if the user could not be unblocked
+ * @apiError {String} error The error that caused success to be false
+ *
+ * @apiError (500) {Boolean} success Will be false if some error occurred.
+ * @apiError (500) {Object} error An object with more information on what error occurred.
+ *
+ * @apiSuccessExample SuccessfulGet:
+ *      HTTP/1.1 201 CREATED
+ *      {
+ *          "success": true
+ *      }
+ *
+ * @apiUse MissingIdError
+ * @apiUse IdNotFoundError
+ * @apiUse ServerError
+ */
+
+/**
  * @api {get} /users/getId?email=XX@gmail.com Get user id from email
  * @apiName GetId
  * @apiGroup Users

@@ -71,6 +71,7 @@ const userSchema = new Schema({
     },
     blockedUsers: [{type: String, required: false}],
     blockedBy: [{type: String, required: false}],
+    messagingWith: [{type: String, required: false}],
     allowedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
     prohibitedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
     radius: {type: Number, required: true, default: 5},
