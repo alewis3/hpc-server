@@ -1264,6 +1264,7 @@
  *
  * @apiSuccess {Boolean} success Will be true if the conversation could be grabbed
  * @apiSuccess {Object[]} messages The list of ids and user info that they are messaging with
+ * @apiSuccess {Date} messages.sentAt The date/time when the message was sent
  * @apiSuccess {String} messages.senderId The id of the user that sent the message
  * @apiSuccess {String} messages.receiverId The id of the user that received the message
  * @apiSuccess {String} messages.message The message that was sent
