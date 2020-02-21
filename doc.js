@@ -1326,7 +1326,7 @@
  * @apiError (500) {Boolean} success Will be false if some error occurred.
  * @apiError (500) {Object} error An object with more information on what error occurred.
  *
- * @apiSuccessExample SuccessfulGet:
+ * @apiSuccessExample SuccessfulPost:
  *      HTTP/1.1 201 CREATED
  *      {
  *          "success": true
