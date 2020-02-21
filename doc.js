@@ -1098,10 +1098,10 @@
  * @api {patch} /users/blockUserEmail Blocks a user by email
  * @apiName PatchBlockUserEmail
  * @apiGroup Users
- * @apiDescription C - This route lets a user (blockingUser) block another user (blockedUser).
+ * @apiDescription C - This route lets a user (blockingUserId) block another user (blockedUserEmail).
  *
- * @apiParam {String} blockingUser The email of the user that wants to block another user.
- * @apiParam {String} blockedUser The email of the user to be blocked
+ * @apiParam {String} blockingUserId The id of the user that wants to block another user.
+ * @apiParam {String} blockedUserEmail The email of the user to be blocked
  *
  * @apiSuccess {Boolean} success Will be true if the user could be blocked
  *
@@ -1128,10 +1128,10 @@
  * @api {patch} /users/unblockUserEmail Unblocks a user by email
  * @apiName PatchUnblockUserEmail
  * @apiGroup Users
- * @apiDescription C - This route lets a user (unblockingUser) unblock another user (unblockedUser).
+ * @apiDescription C - This route lets a user (unblockingUserId) unblock another user (unblockedUserEmail).
  *
- * @apiParam {String} unblockingUser The email of the user that wants to unblock another user.
- * @apiParam {String} unblockedUser The email of the user to be unblocked
+ * @apiParam {String} unblockingUserId The id of the user that wants to unblock another user.
+ * @apiParam {String} unblockedUserEmail The email of the user to be unblocked
  *
  * @apiSuccess {Boolean} success Will be true if the user could be successfully unblocked
  *

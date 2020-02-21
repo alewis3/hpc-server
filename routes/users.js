@@ -345,14 +345,14 @@ router.patch('/unblockUser', async function(req, res) {
  */
 router.patch('/blockUserEmail', async function(req, res) {
     let body = req.body;
-    if (!body.blockingUser || !body.blockedUser) {
+    if (!body.blockingUserId || !body.blockedUserEmail) {
         return res.status(400).send({success: false, error: "MissingEmail"});
     }
-    if (body.blockingUser === body.blockedUser) {
+    if (body.blockingUserId === body.blockedUserEmail) {
         return res.status(400).send({success: false, error: "A user cannot block thyself!."});
     }
-    let blockingUser = await User.findOne({email: body.blockingUser}).exec();
-    let blockedUser = await User.findOne({email: body.blockedUser}).exec();
+    let blockingUser = await User.findOne({email: body.blockingUserId}).exec();
+    let blockedUser = await User.findOne({email: body.blockedUserEmail}).exec();
     if (!blockingUser) {
         return res.status(400).send({success: false, error: "Blocking User does not exist."});
     }
@@ -381,14 +381,14 @@ router.patch('/blockUserEmail', async function(req, res) {
  */
 router.patch('/unblockUserEmail', async function(req, res) {
     let body = req.body;
-    if (!body.unblockingUser || !body.unblockedUser) {
+    if (!body.unblockingUserId || !body.unblockedUserEmail) {
         return res.status(400).send({success: false, error: "MissingEmail"});
     }
-    if (body.unblockingUser === body.unblockedUser) {
+    if (body.unblockingUserId === body.unblockedUserEmail) {
         return res.status(400).send({success: false, error: "A user cannot block thyself!"});
     }
-    let unblockingUser = await User.findOne({email: body.unblockingUser}).exec();
-    let unblockedUser = await User.findOne({email: body.unblockedUser}).exec();
+    let unblockingUser = await User.findOne({email: body.unblockingUserId}).exec();
+    let unblockedUser = await User.findOne({email: body.unblockedUserEmail}).exec();
     if (!unblockingUser) {
         return res.status(400).send({success: false, error: "Unblocking User does not exist."});
     }
