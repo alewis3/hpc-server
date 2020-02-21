@@ -101,7 +101,7 @@
  * @api {get} /preferences/allowedItems?id=XX Get allowed items
  * @apiName GetAllowedItems
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will be called when a user wants to check their allowed items
+ * @apiDescription This route will be called when a user wants to check their allowed items
  *
  * @apiParam {String} id The id of the user to get
  *
@@ -131,7 +131,7 @@
  * @api {get} /preferences/prohibitedItems?id=XX Get prohibited items
  * @apiName GetProhibitedItems
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will be called when a user wants to check their prohibited items
+ * @apiDescription This route will be called when a user wants to check their prohibited items
  *
  * @apiParam {String} id The id of the user to get
  *
@@ -161,7 +161,7 @@
  * @api {post} /preferences/allowedItems Save allowed items
  * @apiName PostAllowedItems
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will be called when a user sets or updates their allowed items
+ * @apiDescription This route will be called when a user sets or updates their allowed items
  *
  * @apiParam {String} id The id of the user to set
  * @apiParam {String} allowedItems The items they want to allow
@@ -187,7 +187,7 @@
  * @api {post} /preferences/prohibitedItems Save prohibited items
  * @apiName PostProhibitedItems
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will be called when a user sets or updates their prohibited items
+ * @apiDescription This route will be called when a user sets or updates their prohibited items
  *
  * @apiParam {String} id The id of the user to set
  * @apiParam {String} prohibitedItems The items they want to prohibit
@@ -213,7 +213,7 @@
  * @api {patch} /preferences/profile Modify or update a user's profile
  * @apiName PatchProfile
  * @apiGroup Preferences.General
- * @apiDescription C - This path will be called on whenever the user makes changes to their account and presses save. All fields are optional but at least one must be sent in for the request call to make sense.
+ * @apiDescription This path will be called on whenever the user makes changes to their account and presses save. All fields are optional but at least one must be sent in for the request call to make sense.
  *
  * @apiParam {String} id The id of the user and the only required field of this request.
  * @apiParam {String} [email] A unique email (This acts as their username)
@@ -267,7 +267,7 @@
  * @api {get} /preferences/profile?id=XX Grab all profile info for a user
  * @apiName GetProfile
  * @apiGroup Preferences.General
- * @apiDescription C - This path will be called on whenever the user wants to view their profile information. The response body for this is LARGE, but many fields are optional.
+ * @apiDescription This path will be called on whenever the user wants to view their profile information. The response body for this is LARGE, but many fields are optional.
  *
  * @apiParam {String} id The user's ID, send in the query string
  *
@@ -448,7 +448,7 @@
  * @api {patch} /preferences/enableListing Enable a host's listing
  * @apiName PatchEnableListing
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will enable a host's listing with only one parameter: the host's id.
+ * @apiDescription This route will enable a host's listing with only one parameter: the host's id.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  *
@@ -471,7 +471,7 @@
  * @api {patch} /preferences/disableListing Disable a host's listing
  * @apiName PatchDisableListing
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will disable a host's listing with only one parameter: the host's id.
+ * @apiDescription This route will disable a host's listing with only one parameter: the host's id.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  *
@@ -494,7 +494,7 @@
  * @api {patch} /preferences/updateListing Update a host's listing as active or inactive
  * @apiName PatchUpdateListing
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will update a host's listing.
+ * @apiDescription This route will update a host's listing.
  *
  * @apiParam {String} id The id of the host **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  * @apiParam {Boolean} isListingOn The boolean that isListingOn should be set to
@@ -524,7 +524,7 @@
  * @api {get} /preferences/isListingOn?id=XX Get a host's current listing status
  * @apiName PatchGetListing
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will get a host's listing status.
+ * @apiDescription This route will get a host's listing status.
  *
  * @apiParam {String} id The id of the host, sent in the query string **MUST BE A HOMEOWNER OR BUSINESS OWNER'S ID**
  *
@@ -553,7 +553,7 @@
  * @api {patch} /preferences/newHomeowner Update a user's account type to "Homeowner"
  * @apiName PatchHomeownerAcctType
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will allow you to update a user's accountType to "Homeowner", and set all the homeowner information.
+ * @apiDescription This route will allow you to update a user's accountType to "Homeowner", and set all the homeowner information.
  *
  * @apiParam {String} id The id of the user to edit (*Must not be a Homeowner!*)
  * @apiParam {String} allowedItems The items they allow.
@@ -585,7 +585,7 @@
  * @api {patch} /preferences/newBusinessOwner Update a user's account type to "Business Owner"
  * @apiName PatchBusinessOwnerAcctType
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will allow you to update a user's accountType to "Business Owner", and set all the business owner information.
+ * @apiDescription This route will allow you to update a user's accountType to "Business Owner", and set all the business owner information.
  *
  * @apiParam {String} id The id of the user to edit (*Must not be a Business owner!*)
  * @apiParam {String} allowedItems The items they allow.
@@ -620,7 +620,7 @@
  * @api {patch} /preferences/newContributor Update a user's account type to "Contributor"
  * @apiName PatchContributorAcctType
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will allow you to update a user's accountType to "Contributor". This will erase any information about the home or business owner
+ * @apiDescription This route will allow you to update a user's accountType to "Contributor". This will erase any information about the home or business owner
  *
  * @apiParam {String} id The id of the user to edit (*Must not be a contributor!*)
  * @apiParam {Number} radius The distance (in miles) of how far they want to search for hosts.
@@ -645,7 +645,7 @@
  * @api {patch} /preferences/homeownerInfo Update a homeowner's info
  * @apiName PatchHomeownerInfo
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will allow you to update or set a homeowner's info, including allowed/prohibitedItems, meetingPlace, display radius, and isListingOn. These fields are optional, but send in at least one so the request has something to do.
+ * @apiDescription This route will allow you to update or set a homeowner's info, including allowed/prohibitedItems, meetingPlace, display radius, and isListingOn. These fields are optional, but send in at least one so the request has something to do.
  *
  * @apiParam {String} id The id of the user to edit (*Must be a Homeowner!*)
  * @apiParam {String} [allowedItems] The items they allow.
@@ -677,7 +677,7 @@
  * @api {patch} /preferences/businessOwnerInfo Update a business owner's info
  * @apiName PatchBusinessOwnerInfo
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route will allow you to update or set a business owner's info, including allowed/prohibitedItems, business name, business website, contributor charge (if any), display radius, and isListingOn, but also the location (which every user has). For the business owner, the location should be the same as the business address. These fields are optional, but send in at least one so the request has something to do.
+ * @apiDescription This route will allow you to update or set a business owner's info, including allowed/prohibitedItems, business name, business website, contributor charge (if any), display radius, and isListingOn, but also the location (which every user has). For the business owner, the location should be the same as the business address. These fields are optional, but send in at least one so the request has something to do.
  *
  * @apiParam {String} id The id of the user to edit (*Must be a Business Owner!*)
  * @apiParam {String} [allowedItems] The items they allow.
@@ -712,7 +712,7 @@
  * @api {post} /users/register Create/register a new user
  * @apiName CreateUser
  * @apiGroup Users
- * @apiDescription C - This route handles registering a user. The request will include an email, password, first and last name, account type, and a birthday in string format.
+ * @apiDescription This route handles registering a user. The request will include an email, password, first and last name, account type, and a birthday in string format.
  *
  * @apiParam {String} email A unique email to register with (This acts as their username)
  * @apiParam {String} password A strong password in plaintext. This is hashed on the API side.
@@ -773,7 +773,7 @@
  * @api {post} /users/login Authenticate a user for login
  * @apiName LoginUser
  * @apiGroup Users
- * @apiDescription C - This route handles authenticating a user when they want to login.
+ * @apiDescription This route handles authenticating a user when they want to login.
  *
  * @apiParam {String} email The email that the user signed up with
  * @apiParam {String} password The password that the user signed up with
@@ -812,7 +812,7 @@
  * @api {get} /users/hosts?id=X Get all nearby hosts location
  * @apiName GetHosts
  * @apiGroup Users
- * @apiDescription C - This endpoint limits the search of hosts by the radius of that user and the radius of each individual host. Will return a list of homeowners and business owners in range and not blocked.
+ * @apiDescription This endpoint limits the search of hosts by the radius of that user and the radius of each individual host. Will return a list of homeowners and business owners in range and not blocked.
  *
  * @apiParam {String} id Sent in the request url, the user id of the user you want to match by.
  *
@@ -912,7 +912,7 @@
  * @api {get} /users/hostsAll?id=X Get all hosts location
  * @apiName GetHostsAll
  * @apiGroup Users
- * @apiDescription C - This endpoint returns all hosts registered.
+ * @apiDescription This endpoint returns all hosts registered.
  *
  * @apiParam {String} id Sent in the request url, the user id of the user you want to match by.
  *
@@ -1012,7 +1012,7 @@
  * @api {post} /users/resetPassword Reset a user's password
  * @apiName ResetPassword
  * @apiGroup Users
- * @apiDescription C - This route handles resetting a password
+ * @apiDescription This route handles resetting a password
  *
  * @apiParam {String} id The id of the user
  * @apiParam {String} old The user's old password to match on
@@ -1038,7 +1038,7 @@
  * @api {patch} /users/blockUser Blocks a user
  * @apiName PatchBlockUser
  * @apiGroup Users
- * @apiDescription C - This route lets a user (blockingUser) block another user (blockedUser).
+ * @apiDescription This route lets a user (blockingUser) block another user (blockedUser).
  *
  * @apiParam {String} blockingUser The user that wants to block another user.
  * @apiParam {String} blockedUser The user to be blocked
@@ -1068,7 +1068,7 @@
  * @api {patch} /users/unblockUser Unblocks a user
  * @apiName PatchUnblockUser
  * @apiGroup Users
- * @apiDescription C - This route lets a user (unblockingUser) unblock another user (unblockedUser).
+ * @apiDescription This route lets a user (unblockingUser) unblock another user (unblockedUser).
  *
  * @apiParam {String} unblockingUser The id of the user that wants to unblock another user.
  * @apiParam {String} unblockedUser The id of the user to be unblocked
@@ -1098,7 +1098,7 @@
  * @api {patch} /users/blockUserEmail Blocks a user by email
  * @apiName PatchBlockUserEmail
  * @apiGroup Users
- * @apiDescription C - This route lets a user (blockingUserId) block another user (blockedUserEmail).
+ * @apiDescription his route lets a user (blockingUserId) block another user (blockedUserEmail).
  *
  * @apiParam {String} blockingUserId The id of the user that wants to block another user.
  * @apiParam {String} blockedUserEmail The email of the user to be blocked
@@ -1128,7 +1128,7 @@
  * @api {patch} /users/unblockUserEmail Unblocks a user by email
  * @apiName PatchUnblockUserEmail
  * @apiGroup Users
- * @apiDescription C - This route lets a user (unblockingUserId) unblock another user (unblockedUserEmail).
+ * @apiDescription This route lets a user (unblockingUserId) unblock another user (unblockedUserEmail).
  *
  * @apiParam {String} unblockingUserId The id of the user that wants to unblock another user.
  * @apiParam {String} unblockedUserEmail The email of the user to be unblocked
@@ -1158,7 +1158,7 @@
  * @api {get} /preferences/blockedUsers?id=XX Get blocked users for one specific user.
  * @apiName GetBlockedUsers
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route lets you grab all blocked users for one user in particular.
+ * @apiDescription This route lets you grab all blocked users for one user in particular.
  *
  * @apiParam {String} id The id of the user you want to check for
  *
@@ -1182,7 +1182,7 @@
  * @api {get} /preferences/blockedBy?id=XX Get all the users that have blocked this user
  * @apiName GetBlockedBy
  * @apiGroup Preferences.Specific
- * @apiDescription C - This route lets you grab all users that have blocked this user.
+ * @apiDescription This route lets you grab all users that have blocked this user.
  *
  * @apiParam {String} id The id of the user you want to check for
  *
@@ -1206,7 +1206,7 @@
  * @api {get} /messages/conversations?id=XX Get all conversations this user is involved in
  * @apiName GetConversations
  * @apiGroup Messages
- * @apiDescription C - This endpoint will be called to load the list of conversations in the side panel for a user
+ * @apiDescription This endpoint will be called to load the list of conversations in the side panel for a user
  *
  * @apiParam {String} id The id of the user to load messages for
  *
@@ -1257,7 +1257,7 @@
  * @api {get} /messages/conversation?loggedInId=XX&otherId=XX Get a specific conversation with a specific user
  * @apiName GetConversation
  * @apiGroup Messages
- * @apiDescription C - This endpoint will be called to load a conversation between two users
+ * @apiDescription This endpoint will be called to load a conversation between two users
  *
  * @apiParam {String} loggedInId The id of the user that is loading messages
  * @apiParam {String} otherId The id of the user that they are messaging with
@@ -1312,7 +1312,7 @@
  * @api {post} /messages Send a message to a user
  * @apiName PostMessage
  * @apiGroup Messages
- * @apiDescription C - This endpoint will be called to send a message and save it in the DB
+ * @apiDescription This endpoint will be called to send a message and save it in the DB
  *
  * @apiParam {String} senderId The id of the user that is sending the message
  * @apiParam {String} receiverId The id of the user that they are sending the message to
@@ -1341,7 +1341,7 @@
  * @api {get} /users/getId?email=XX@gmail.com Get user id from email
  * @apiName GetId
  * @apiGroup Users
- * @apiDescription C - This route enables you to give an email and get back the user's _id.
+ * @apiDescription This route enables you to give an email and get back the user's _id.
  *
  * @apiParam {String} email The email of the user that you want to get the id from, sent in the query.
  *
