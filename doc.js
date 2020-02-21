@@ -1281,11 +1281,13 @@
  *          "success": true,
  *          "messages" :[
  *              {
+ *                  "sentAt": ISODate("2020-02-21T17:15:22.743Z"),
  *                  "senderId": "5de5334cf7bdb6eeb7edf5f7",
  *                  "receiverId": "5de53318f7bdb6eeb7edf5f6",
  *                  "message": "Hello"
  *              },
  *              {
+ *                  "sentAt": ISODate("2020-02-21T17:15:22.743Z"),
  *                  "senderId": "5de53318f7bdb6eeb7edf5f6",
  *                  "receiverId": "5de5334cf7bdb6eeb7edf5f7",
  *                  "message": "world"
@@ -1294,7 +1296,7 @@
  *          ]
  *      }
  *
- * @apiSuccessExample SuccessfulGet:
+ * @apiSuccessExample SuccessfulGetWithNoContent:
  *      HTTP/1.1 204 NO CONTENT
  *      {
  *          "success": true,
