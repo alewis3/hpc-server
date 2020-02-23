@@ -387,7 +387,7 @@ router.patch('/unblockUserEmail', async function(req, res) {
     if (body.unblockingUserId === body.unblockedUserEmail) {
         return res.status(400).send({success: false, error: "A user cannot block thyself!"});
     }
-    let unblockingUser = await User.findOne({email: body.unblockingUserId}).exec();
+    let unblockingUser = await User.findById(body.unblockingUserId).exec();
     let unblockedUser = await User.findOne({email: body.unblockedUserEmail}).exec();
     if (!unblockingUser) {
         return res.status(400).send({success: false, error: "Unblocking User does not exist."});
