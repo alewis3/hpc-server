@@ -96,9 +96,12 @@ router.get('/conversation', async function(req, res) {
 router.get('/conversations', async function (req, res) {
    const id = req.query.id;
    const user = await User.findById(id).exec();
+   if (!user) {
+      return res.status(400).send({success: false, error: "IdNotFound"});
+   }
    const messagingWithArr = user.messagingWith;
    if (messagingWithArr.length === 0) {
-      return res.status(204).send({success: true, conversations: []})
+      return res.status(204).send({success: true, conversations: []});
    }
    const userConvoInfo = await Promise.all(messagingWithArr.map(async function(id) {
       var messagingUser = await User.findById(id).exec();
