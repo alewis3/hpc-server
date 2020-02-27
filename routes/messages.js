@@ -33,8 +33,14 @@ router.post('/', async function(req, res) {
    if (!sender) {
       return res.status(400).send({success: false, error: "SenderIdNotFound"});
    }
+   else {
+      console.log(sender);
+   }
    if (!receiver) {
       return res.status(400).send({success: false, error: "ReceiverIdNotFound"});
+   }
+   else {
+      console.log(receiver);
    }
 
    // update the sender id's messagingWith array to have the receiver id first
