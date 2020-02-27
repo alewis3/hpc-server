@@ -13,10 +13,10 @@ router.post('/', async function(req, res) {
    var body = req.body;
 
    // check if the ids exist
-   if (is.not.existy(body.senderId)) {
+   if (is.not.existy(body.senderId) || body.senderId.length === 0) {
       return res.status(400).send({success: false, error: "SenderIdMissing"});
    }
-   if (is.not.existy(body.receiverId)) {
+   if (is.not.existy(body.receiverId) || body.receiverId.length === 0) {
       return res.status(400).send({success: false, error: "ReceiverIdMissing"});
    }
 
