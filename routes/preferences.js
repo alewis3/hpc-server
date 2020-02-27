@@ -438,7 +438,7 @@ router.patch('/profile', async function (req, res) {
  */
 router.get('/profile', async function(req, res) {
     let id = req.query.id;
-    if (is.undefined(id)) {
+    if (is.undefined(id) || id.length === 0) {
         return res.status(400).send({success: false, error: "MissingId"})
     }
     await User.findById(id).exec(function(err, user) {
