@@ -281,7 +281,7 @@ router.get('/isListingOn', async function(req, res) {
 router.patch('/profile', async function (req, res) {
    let body = req.body;
    let id = body.id;
-   if (is.undefined(id)) {
+   if (is.undefined(id) || id.length === 0) {
        return res.status(400).send({success: false, error: "MissingId"})
    }
    // grab the user
