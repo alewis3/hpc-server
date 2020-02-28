@@ -88,7 +88,7 @@ router.get('/conversation', async function(req, res) {
    const loggedInId = query.loggedInId;
    const otherId = query.otherId;
 
-   await Message.find({$or: [{senderId: loggedInId, receiverId: otherId}, {senderId: otherId, receiverId: loggedInId}]}).select("sentAt senderId receiverId message -_id").sort({_id: -1}).exec(function (err, messages) {
+   await Message.find({$or: [{senderId: loggedInId, receiverId: otherId}, {senderId: otherId, receiverId: loggedInId}]}).select("sentAt senderId receiverId message -_id").sort({_id: 1}).exec(function (err, messages) {
       if (err) return res.status(500).send({success: false, error: err});
       else return res.status(200).send({success: true, messages: messages});
    });
