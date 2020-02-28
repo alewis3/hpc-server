@@ -189,10 +189,10 @@ router.get('/hosts', async function(req, res) {
         var cradius = user.radius;
 
         // find all business owners in range and not blocked by this user or have blocked this user
-        let businessOwners = await User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Business Owner"}).exec();
+        let businessOwners = await User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Business Owner", businessOwnerInfo: {isListingOn: true}}).exec();
 
         // find all homeowners in range and not blocked by the user
-        let homeowners = await User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Homeowner"}).exec();
+        let homeowners = await User.find({_id: {$nin: [...user.blockedUsers, ...user.blockedBy]}, accountType: "Homeowner", homeownerInfo: {isListingOn: true}}).exec();
         console.log("business owners: " + businessOwners);
         console.log("homeowners: " + homeowners);
         if (!businessOwners && !homeowners) {
