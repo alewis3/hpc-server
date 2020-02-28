@@ -279,8 +279,8 @@ router.patch('/blockUser', async function(req, res) {
     if (body.blockingUser === body.blockedUser) {
         return res.status(400).send({success: false, error: "A user cannot block thyself!."});
     }
-   let blockingUser = await User.findById(body.blockingUser).exec();
-   let blockedUser = await User.findById(body.blockedUser).exec();
+   let blockingUser = await User.findByIdAndUpdate(body.blockingUser, {$pull: {messagingWith: body.blockedUser}}).exec();
+   let blockedUser = await User.findByIdAndUpdate(body.blockedUser, {$pull: {messagingWith: body.blockingUser}}).exec();
    if (!blockingUser) {
        return res.status(400).send({success: false, error: "Blocking User does not exist."});
    }

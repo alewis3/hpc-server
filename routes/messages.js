@@ -109,17 +109,24 @@ router.get('/conversations', async function (req, res) {
    if (messagingWithArr.length === 0) {
       return res.status(204).send({success: true, conversations: []});
    }
-   const userConvoInfo = await Promise.all(messagingWithArr.map(async function(id) {
-      var messagingUser = await User.findById(id).exec();
-      console.log(messagingUser.name);
-      console.log(messagingUser.email);
-      console.log(messagingUser._id);
-      let retJSON;
-      return retJSON = {
-         "email": messagingUser.email,
-         "name": messagingUser.name,
-         "id": messagingUser._id
-      };
+   const userConvoInfo = await Promise.all(messagingWithArr.filter(function(id) {
+      if (!user.blockedBy.includes(id) && !user.blockedUsers.includes(id)) {
+         return true;
+      }
+      else {
+         return false;
+      }
+   }).map(async function(id) {
+         var messagingUser = await User.findById(id).exec();
+         console.log(messagingUser.name);
+         console.log(messagingUser.email);
+         console.log(messagingUser._id);
+         let retJSON;
+         return retJSON = {
+            "email": messagingUser.email,
+            "name": messagingUser.name,
+            "id": messagingUser._id
+         };
    }));
    console.log(userConvoInfo);
    if (!userConvoInfo) {
