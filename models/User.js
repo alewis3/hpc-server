@@ -1,6 +1,10 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var bcrypt = require('bcryptjs');
+let mongoose = require('mongoose');
+let Schema = mongoose.Schema;
+let bcrypt = require('bcryptjs');
+let is = require('is_js');
+let properFormat = require('../helpers/properFormat');
+let capitalizedFormat = require('../helpers/capitalizedFormat');
+let isValidStateAbbreviation = require('../helpers/isValidStateAbbreviation');
 mongoose.set('useFindAndModify', false);
 
 let gmApi = require('@google/maps');
@@ -10,16 +14,22 @@ var gmClient = gmApi.createClient({
 });
 
 const userSchema = new Schema({
-    email: {
+    email: { // is converted to lowercase in a pre save hook
         type: String,
         unique: true,
-        required: true
+        required: true,
+        validate: {
+            validator: function(e) {
+                return is.email(e);
+            },
+            message: props => `${props.value()} is not a valid email!`
+        }
     },
-    password: {
+    password: { // is hashed in a pre save hook
         type: String,
         required: true
     },
-    name: {
+    name: { // is proper formatted in a pre save hook
         first: {
             type: String,
             required: true
@@ -30,47 +40,85 @@ const userSchema = new Schema({
         }
     },
     location: {
-        address: String,
-        city: String,
-        state: {
+        address: String, // proper formatted in a pre save hook
+        city: String, // proper formatted in a pre save hook
+        state: { // capitalized in a pre save hook
             type: String, 
             minlength: 2,
-            maxlength: 2
+            maxlength: 2,
+            validate: {
+                validator: function(st) {
+                    return isValidStateAbbreviation(st.toUpperCase());
+                },
+                message: props => `${props.value} is not a valid state abbreviation!`
+            }
         },      
-        zip: Number,
-        lat: Number,
-        long: Number
+        zip: { // can only be a us zip code at this point
+            type: Number,
+            validate: {
+                validator: function(z) {
+                    return is.usZipCode(z);
+                },
+                message: props => `${props.value} is not a valid US zip code!`
+            }
+        },
+        lat: Number, // these two are calculated in a pre save hook using google maps
+        long: Number // so not necessary to add them.
     },
     accountType: {
         type: String,
         enum: ['Contributor', 'Homeowner', 'Business Owner', 'System Admin']
     },
-    blockedUsers: [{ type : Schema.Types.ObjectId, ref: 'User' }],
-    blockedBy: [{ type : Schema.Types.ObjectId, ref: 'User' }],
-    allowedItems: {type: String, required: false},
-    prohibitedItems: {type: String, required: false},
+    blockedUsers: [{type: String, required: false}],
+    blockedBy: [{type: String, required: false}],
+    messagingWith: [{type: String, required: false}],
+    allowedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
+    prohibitedItems: {type: String, required: false}, // this is capitalized (first letter only) in a pre save hook
     radius: {type: Number, required: true, default: 5},
     homeownerInfo: {
         required: false,
-        meetingPlace: {   
-            address: String,
-            city: String,
-            state: String,
-            zip: Number,
-            lat: Number,
-            long: Number
+        meetingPlace: { // when the user document is saved for the first time, this will default to same as the location if it is not set
+            address: String, // proper formatted in a pre save hook
+            city: String, // proper formatted in a pre save hook
+            state: { // capitalized in a pre save hook
+                type: String,
+                minlength: 2,
+                maxlength: 2
+            },
+            zip: { // can only be a us zip code at this point
+                type: Number,
+                validate: {
+                    validator: function(z) {
+                        return is.usZipCode(z);
+                    },
+                    message: props => `${props.value} is not a valid US zip code!`
+                }
+            },
+            lat: Number, // these are calculated in a pre save hook using google maps
+            long: Number // so no need to calculate manually
         },
-        isListingOn: Boolean
+        isListingOn: {
+            type: Boolean
+        }
     },
     businessOwnerInfo: {
         required: false,
-        isListingOn: Boolean,
-        businessName: String,
-        businessPhone:Number,
-        businessWebsite: String,
-        businessHours: {
-            weekdayHours: String,
-            weekendHours: String
+        isListingOn: {
+            type: Boolean
+        },
+        businessName: String, // this is proper formatted in a pre-save hook
+        businessWebsite: { // this url is converted to lowercase in a pre save hook
+            type: String,
+            required: false,
+            validate: {
+                validator: function(v) {
+                    return is.url(v);
+                },
+                message: props => `${props.value} is not a valid website!`
+            }
+        },
+        contributorCharge: {
+            type: Number
         }
     }
 }, 
@@ -78,37 +126,69 @@ const userSchema = new Schema({
     timestamps: true
 });
 
-/*
- * A pre-save hook for hashing the pwd
- */
+
+// A pre-save hook for hashing the pwd
 userSchema.pre('save', function(next) {
     let user = this;
     if (!user.isModified("password")) {
         return next();
     }
-    var pw = user.password;
+    const pw = user.password;
     bcrypt.genSalt(10, (err, salt) => {
         bcrypt.hash(pw, salt, (err, hash) => {
             if (err) return next(err);
-            console.log(hash);
             user.password = hash;
-            console.log(user.password);
             next();
         })
     });
 });
 
-// and a pre save hook for getting the latitude and longitude
-userSchema.pre('save', function(next) {
-    if (!this.isModified("location")) {
+// a pre save hook for converting email to lowercase
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("email")) {
         return next();
     }
+    let email = user.email;
+    user.email = email.toLowerCase();
+    next();
+});
+
+// a pre save hook for proper formatting for the name
+userSchema.pre('save', function(next) {
     let user = this;
+    if (!user.isModified("name")) {
+        return next();
+    }
+    const first = user.name.first;
+    const last = user.name.last;
+    const firstFormatted = properFormat(first);
+    const lastFormatted = properFormat(last);
+    user.name.first = firstFormatted;
+    user.name.last = lastFormatted;
+    next();
+});
+
+// a pre save hook for getting the latitude and longitude and setting the meeting place to same as
+// location if they are a homeowner and meeting place has not been set yet
+userSchema.pre('save', function(next) {
+    let user = this;
+    if (!user.isModified("location")) {
+        return next();
+    }
+
+    // formatting the address properly
     var state = user.location.state;
     state = state.toUpperCase();
     user.location.state = state;
 
-    gmClient.geocode({
+    const addr = user.location.address;
+    user.location.address = properFormat(addr);
+
+    const city = user.location.city;
+    user.location.city = properFormat(city);
+
+    gmQuery = gmClient.geocode({
         address: user.location.address + " " + user.location.city + " " + user.location.state + " " + user.location.zip
     }, function(err, response) {
         if (err) {
@@ -116,14 +196,142 @@ userSchema.pre('save', function(next) {
             return next(err);
         }
         else {
-            console.log(response.json.results[0].geometry);
             user.location.lat = response.json.results[0].geometry.location.lat;
             user.location.long = response.json.results[0].geometry.location.lng;
-            console.log(user.location.lat + " " + user.location.long);
+            console.log("lat: " + user.location.lat + " long: " + user.location.long);
+            next();
+        }
+    });
+});
+
+// a pre save hook for getting the latitude and longitude
+// of the meeting place and proper formatting everything properly
+userSchema.pre('save', function(next) {
+    let user = this;
+    if (!user.isModified("homeownerInfo.meetingPlace.address")) {
+        return next();
+    }
+
+    // formatting the address properly
+    var state = user.homeownerInfo.meetingPlace.state;
+    user.homeownerInfo.meetingPlace.state = state.toUpperCase();
+
+    const addr = user.homeownerInfo.meetingPlace.address;
+    user.homeownerInfo.meetingPlace.address = properFormat(addr);
+
+    const city = user.homeownerInfo.meetingPlace.city;
+    user.homeownerInfo.meetingPlace.city = properFormat(city);
+
+    gmClient.geocode({
+        address: user.homeownerInfo.meetingPlace.address + " " + user.homeownerInfo.meetingPlace.city + " " + user.homeownerInfo.meetingPlace.state + " " + user.homeownerInfo.meetingPlace.zip
+    }, function(err, response) {
+        if (err) {
+            console.log(err);
+            return next(err);
+        }
+        else {
+            console.log(response.json.results[0].geometry.location);
+            user.homeownerInfo.meetingPlace.lat = response.json.results[0].geometry.location.lat;
+            user.homeownerInfo.meetingPlace.long = response.json.results[0].geometry.location.lng;
+            console.log("lat: " + user.homeownerInfo.meetingPlace.lat + " long: " + user.homeownerInfo.meetingPlace.long);
             next();
         }
     });
 
+});
+
+// pre save hook for capitalizing allowed items
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("allowedItems")) {
+        return next();
+    }
+    let allowedItems = user.allowedItems;
+    user.allowedItems = capitalizedFormat(allowedItems);
+    next();
+});
+
+// pre save hook for capitalizing prohibited items
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("prohibitedItems")) {
+        return next();
+    }
+    let prohibited = user.prohibitedItems;
+    user.prohibitedItems = capitalizedFormat(prohibited);
+    next();
+});
+
+// pre save hook for proper formatting the business name
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("businessOwnerInfo.businessName")) {
+        return next();
+    }
+    let bName = user.businessOwnerInfo.businessName;
+    user.businessOwnerInfo.businessName = properFormat(bName);
+    next();
+});
+
+// pre save hook for lowercasing the business website url
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("businessOwnerInfo.businessWebsite")) {
+        return next();
+    }
+    let bWebsite = user.businessOwnerInfo.businessWebsite;
+    user.businessOwnerInfo.businessWebsite = bWebsite.toLowerCase();
+    next();
+});
+
+// pre save for making sure all values are filled out in the db
+userSchema.pre('save', function (next) {
+    let user = this;
+    if (!user.isModified("accountType")) {
+        return next();
+    }
+    let accountType = user.accountType;
+    if (accountType === "Homeowner") {
+        if (is.not.existy(user.homeownerInfo.meetingPlace.address)) {
+            user.homeownerInfo.meetingPlace = user.location;
+        }
+        if (is.not.existy(user.homeownerInfo.isListingOn)) {
+            user.homeownerInfo.isListingOn = true;
+        }
+        if (is.not.existy(user.allowedItems)) {
+            user.allowedItems = "";
+        }
+        if (is.not.existy(user.prohibitedItems)) {
+            user.prohibitedItems = "";
+        }
+        user.businessOwnerInfo = null;
+    }
+    else if (accountType === "Business Owner") {
+        if (is.not.existy(user.businessOwnerInfo.businessName)) {
+            user.businessOwnerInfo.businessName = capitalizedFormat("Edit your business name");
+        }
+        if (is.not.existy(user.businessOwnerInfo.businessWebsite)) {
+            user.businessOwnerInfo.businessWebsite = "https://www.google.com";
+        }
+        if (is.not.existy(user.businessOwnerInfo.isListingOn)) {
+            user.businessOwnerInfo.isListingOn = true;
+        }
+        if (is.not.existy(user.businessOwnerInfo.contributorCharge)) {
+            user.businessOwnerInfo.contributorCharge = 0;
+        }
+        if (is.not.existy(user.allowedItems)) {
+            user.allowedItems = "";
+        }
+        if (is.not.existy(user.prohibitedItems)) {
+            user.prohibitedItems = "";
+        }
+        user.homeownerInfo = null;
+    }
+    else if (accountType === "Contributor") {
+        user.homeownerInfo = null;
+        user.businessOwnerInfo = null;
+    }
+    next();
 });
 
 /*
@@ -145,18 +353,31 @@ userSchema.methods.findBlockedBy = function(cb) {
  * both add that user's _id to this user's blockedUsers array and add this user's
  * _id to the blocked users blockedBy list
  */
-userSchema.methods.blockUser = function(blocked, cb) {
-    var blockedUser = this.model('User').find({'_id': blocked._id}, cb);
-    var blockedUsersSet = this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$set: {blockedUsers: {$addToSet: blockedUser._id}}}, function(err, doc) {
-        if (err) return false;
-        else return true;
+userSchema.methods.blockUser = async function(blocked, cb) {
+    var blockedUser = await this.model('User').findById(blocked._id).exec();
+    var blockedUsersSet = await this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$addToSet: {blockedUsers: blockedUser._id}}, function(err) {
+        return !err;
     });
-    var blockedBySet = this.model('User').findOneAndUpdate({'_id': {$eq: blockedUser._id}}, {$set: {blockedBy: {$addToSet: this._id}}}, function(err, doc) {
-        if (err) return false;
-        else return true;
+    var blockedBySet = await this.model('User').findOneAndUpdate({'_id': {$eq: blockedUser._id}}, {$addToSet: {blockedBy: this._id}}, function(err) {
+        return !err;
     });
-    if(blockedUsersSet && blockedBySet) return true;
-    else return false;
+    return !!(blockedUsersSet && blockedBySet);
+};
+
+/*
+ * This method will unblock a user by taking a user to unblock (unblocked) and will
+ * both remove that user's _id from this user's blockedUsers array and remove this
+ * user's _id from the blocked users blockedBy list
+ */
+userSchema.methods.unblockUser = async function (unblocked, cb) {
+  var unblockedUser = await this.model('User').findById(unblocked._id).exec();
+  var unblockedUserRemoved = await this.model('User').findOneAndUpdate({'_id': {$eq: this._id}}, {$pull: {blockedUsers: unblockedUser._id}}, function(err) {
+      return !err;
+  });
+  var unblockedByUserRemoved = await this.model('User').findOneAndUpdate({'_id': {$eq: unblockedUser._id}}, {$pull: {blockedBy: this._id}}, function (err) {
+      return !err;
+  });
+  return !!(unblockedByUserRemoved && unblockedUserRemoved);
 };
 
 /*

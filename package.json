@@ -10,6 +10,7 @@
     "bcrypt": "^3.0.6",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.4",
+    "cors": "^2.8.5",
     "debug": "^2.6.9",
     "dotenv": "^8.2.0",
     "express": "^4.16.4",
@@ -26,7 +27,7 @@
   "apidoc": {
     "name": "Host, Post, and Compost API documentation",
     "version": "1.0.0",
-    "description": "A collection of API paths implemented for our Host, Post, and Compost (HPC) senior project. \nContributors to the project: \n- Amanda Lewis\n- Evangeline Mavrommati\n- Fairen Sutton\n\nAcronym meanings for routes: \nC - Completed \n WIP - Work in Progress\nNI - Not Implemented",
+    "description": "A collection of API paths implemented for our Host, Post, and Compost (HPC) senior project. \nContributors to the project: \n- Amanda Lewis\n- Evangeline Mavrommati\n- Fairen Sutton",
     "url": "https://hpcompost.com/api"
   }
 }
